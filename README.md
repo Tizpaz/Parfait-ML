@@ -1,5 +1,7 @@
 # ML-code-fairness
 ### Implementations for detecting and understanding biases in ML libraries
+### Requirements
+Python 3.6 and standard packages such as Numpy, Scikit-learn.
 
 Run the random search for adult credit dataset with gender as sensitive feature:
 ```
