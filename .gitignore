@@ -1,0 +1,12 @@
+*._Store
+*._.DS_Store
+*.pyc
+*.csv
+*.txt
+bank_age/
+census_gender/
+census_race/
+credit_gender/
+RQ2/
+__pycache__/
+job-submit.sh
