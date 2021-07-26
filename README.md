@@ -5,6 +5,7 @@ Python 3.6 and standard packages such as Numpy, Scikit-learn.
 
 Run the random search for adult credit dataset with gender as sensitive feature:
 ```
+python main_random.py --dataset=census --algorithm=LogisticRegression --sensitive_index=9 --max_iter=100000  2>&1 | tee LogisticRegression_census_gender_random_output.txt &
 python main_random.py --dataset=credit --algorithm=TreeRegressor --sensitive_index=9 --max_iter=100000 2>&1 | tee TreeRegressor_credit_gender_random_output.txt &
 python main_random.py --dataset=credit --algorithm=Decision_Tree_Classifier --sensitive_index=9 --max_iter=100000 2>&1 | tee Decision_Tree_Classifier_credit_random_random_output.txt &
 python main_random.py --dataset=credit --algorithm=Discriminant_Analysis --sensitive_index=9 --max_iter=100000 2>&1 | tee Discriminant_Analysis_credit_gender_random_output.txt &
