@@ -3,9 +3,7 @@ import time
 import xml_parser
 
 import numpy as np
-from sklearn.externals.joblib import parallel_backend
 from sklearn.linear_model.logistic import LogisticRegression
-from sklearn.datasets import make_classification
 
 def logistic_regression(inp, X_train, X_test, y_train, y_test):
     print(inp)
