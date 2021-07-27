@@ -107,3 +107,34 @@ class bank:
 
     # specify the categorical features with their indices
     categorical_features = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+
+class compas:
+    """
+    Configuration of dataset Compas
+    """
+
+    # the size of total features
+    params = 12
+
+    input_bounds = []
+    input_bounds.append([0, 1])
+    input_bounds.append([0, 2])
+    input_bounds.append([0, 1])
+    input_bounds.append([0, 20])
+    input_bounds.append([1, 10])
+    input_bounds.append([0, 38])
+    input_bounds.append([0, 1])
+    input_bounds.append([0, 1])
+    input_bounds.append([0, 1])
+    input_bounds.append([1, 10])
+    input_bounds.append([1, 10])
+    input_bounds.append([0, 38])
+
+    # the name of each feature
+    feature_name = []
+
+    # the name of each class
+    class_name = ["no", "yes"]
+
+    # specify the categorical features with their indices
+    categorical_features = [0, 1, 2, 4, 6, 7, 8, 9, 10]
