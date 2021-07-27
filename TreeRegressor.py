@@ -36,10 +36,10 @@ def TreeRegress(inp, X_train, X_test, y_train, y_test):
 
     arr[8] = True
 
-    if(arr[13] == 'None'):
-        arr[13] = None
-    else:
-        arr[13] = random.randint(int(X_train.shape[0]/4), int(3*X_train.shape[0]/4))
+    # if(arr[13] == 'None'):
+    arr[13] = None
+    # else:
+    #     arr[13] = random.randint(int(X_train.shape[0]/4), int(3*X_train.shape[0]/4))
 
     try:
         random_forest = RandomForestRegressor(n_estimators=arr[11], criterion=arr[0],
