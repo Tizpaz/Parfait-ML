@@ -132,7 +132,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
     highest_acc_inp = None
     AOD_diff = 0.0
 
-    filename = program_name + "_" +  dataset + "_" + sensitive_name + "_random_res.csv"
+    filename = program_name + "_" +  dataset + "_" + sensitive_name + "_random_" + str(int(start_time)) + "_res.csv"
 
     with open(filename, 'w') as f:
         for counter in range(max_iter):

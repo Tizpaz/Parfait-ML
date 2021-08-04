@@ -20,10 +20,11 @@ from sklearn.model_selection import train_test_split
 from fairlearn.metrics import MetricFrame, selection_rate, false_positive_rate, true_positive_rate
 from fairlearn.metrics import demographic_parity_difference, demographic_parity_ratio, equalized_odds_difference
 
-from adf_utils.config import census, credit, bank
+from adf_utils.config import census, credit, bank, compas
 from adf_data.census import census_data
 from adf_data.credit import credit_data
 from adf_data.bank import bank_data
+from adf_data.compas import compas_data
 import xml_parser
 import xml_parser_domains
 
@@ -258,7 +259,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
     highest_acc_inp = None
     AOD_diff = 0.0
 
-    filename = program_name + "_" +  dataset + "_" + sensitive_name + "_coverage_res.csv"
+    filename = program_name + "_" +  dataset + "_" + sensitive_name + "_coverage_" + str(int(start_time)) + "_res.csv"
 
     with open(filename, 'w') as f:
         for counter in range(max_iter):
@@ -457,8 +458,8 @@ if __name__ == '__main__':
     algorithm = args.algorithm
     num_iteration =  int(args.max_iter)
 
-    data = {"census":census_data, "credit":credit_data, "bank":bank_data}
-    data_config = {"census":census, "credit":credit, "bank":bank}
+    data = {"census":census_data, "credit":credit_data, "bank":bank_data, "compas": compas_data}
+    data_config = {"census":census, "credit":credit, "bank":bank, "compas": compas}
 
     # census (9 is for sex: 0 (men) vs 1 (female); 8 is for race: 0 (white) vs 4 (black))
     sensitive_param = int(args.sensitive_index)
@@ -482,6 +483,18 @@ if __name__ == '__main__':
         group_0 = 3
         group_1 = 5
         sensitive_name = "age"
+    if dataset == "compas" and sensitive_param == 1:  # sex
+        group_0 = 0 # male
+        group_1 = 1 # female
+        sensitive_name = "gender"
+    if dataset == "compas" and sensitive_param == 2:  # age
+        group_0 = 0 # under 25
+        group_1 = 2 # greater than 45
+        sensitive_name = "age"
+    if dataset == "compas" and sensitive_param == 3:  # race
+        group_0 = 0 # non-Caucasian
+        group_1 = 1 # Caucasian
+        sensitive_name = "race"
 
     X, Y, input_shape, nb_classes = data[dataset]()
 
