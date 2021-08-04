@@ -79,3 +79,39 @@ python main_coverage.py --dataset=bank --algorithm=TreeRegressor --sensitive_ind
 python main_coverage.py --dataset=bank --algorithm=Decision_Tree_Classifier --sensitive_index=1 --max_iter=100000 2>&1 | tee Decision_Tree_Classifier_bank_coverage_output.txt &
 python main_coverage.py --dataset=bank --algorithm=Discriminant_Analysis --sensitive_index=1 --max_iter=100000 2>&1 | tee Discriminant_Analysis_bank_coverage_output.txt &
 ```
+```
+python main_random.py --dataset=compas --algorithm=LogisticRegression --sensitive_index=1 --max_iter=100000 2>&1 | tee LogisticRegression_compas_gender_random_output.txt &
+python main_random.py --dataset=compas --algorithm=TreeRegressor --sensitive_index=1 --max_iter=100000 2>&1 | tee TreeRegressor_compas_gender_random_output.txt &
+python main_random.py --dataset=compas --algorithm=Decision_Tree_Classifier --sensitive_index=1 --max_iter=100000 2>&1 | tee Decision_Tree_Classifier_compas_gender_random_output.txt &
+python main_random.py --dataset=compas --algorithm=Discriminant_Analysis --sensitive_index=1 --max_iter=100000 2>&1 | tee Discriminant_Analysis_compas_gender_random_output.txt &
+```
+```
+python main_mutation.py --dataset=compas --algorithm=LogisticRegression --sensitive_index=1 --max_iter=100000 2>&1 | tee LogisticRegression_compas_gender_mutation_output.txt &
+python main_mutation.py --dataset=compas --algorithm=TreeRegressor --sensitive_index=1 --max_iter=100000 2>&1 | tee TreeRegressor_compas_gender_mutation_output.txt &
+python main_mutation.py --dataset=compas --algorithm=Decision_Tree_Classifier --sensitive_index=1 --max_iter=100000 2>&1 | tee Decision_Tree_Classifier_compas_gender_mutation_output.txt &
+python main_mutation.py --dataset=compas --algorithm=Discriminant_Analysis --sensitive_index=1 --max_iter=100000 2>&1 | tee Discriminant_Analysis_compas_gender_mutation_output.txt &
+```
+```
+python main_coverage.py --dataset=compas --algorithm=LogisticRegression --sensitive_index=1 --max_iter=100000 2>&1 | tee LogisticRegression_compas_gender_coverage_output.txt &
+python main_coverage.py --dataset=compas --algorithm=TreeRegressor --sensitive_index=1 --max_iter=100000 2>&1 | tee TreeRegressor_compas_gender_coverage_output.txt &
+python main_coverage.py --dataset=compas --algorithm=Decision_Tree_Classifier --sensitive_index=1 --max_iter=100000 2>&1 | tee Decision_Tree_Classifier_compas_gender_coverage_output.txt &
+python main_coverage.py --dataset=compas --algorithm=Discriminant_Analysis --sensitive_index=1 --max_iter=100000 2>&1 | tee Discriminant_Analysis_compas_gender_coverage_output.txt &
+```
+```
+python main_random.py --dataset=compas --algorithm=LogisticRegression --sensitive_index=3 --max_iter=100000  2>&1 | tee LogisticRegression_compas_race_random_output.txt &
+python main_random.py --dataset=compas --algorithm=TreeRegressor --sensitive_index=3 --max_iter=100000 2>&1 | tee TreeRegressor_compas_race_random_output.txt &
+python main_random.py --dataset=compas --algorithm=Decision_Tree_Classifier --sensitive_index=3 --max_iter=100000 2>&1 | tee Decision_Tree_Classifier_compas_race_random_output.txt &
+python main_random.py --dataset=compas --algorithm=Discriminant_Analysis --sensitive_index=3 --max_iter=100000 2>&1 | tee Discriminant_Analysis_compas_race_random_output.txt &
+```
+```
+python main_mutation.py --dataset=compas --algorithm=LogisticRegression --sensitive_index=3 --max_iter=100000 2>&1 | tee LogisticRegression_compas_race_mutation_output.txt &
+python main_mutation.py --dataset=compas --algorithm=TreeRegressor --sensitive_index=3 --max_iter=100000 2>&1 | tee TreeRegressor_compas_race_mutation_output.txt &
+python main_mutation.py --dataset=compas --algorithm=Decision_Tree_Classifier --sensitive_index=3 --max_iter=100000 2>&1 | tee Decision_Tree_Classifier_compas_race_mutation_output.txt &
+python main_mutation.py --dataset=compas --algorithm=Discriminant_Analysis --sensitive_index=3 --max_iter=100000 2>&1 | tee Discriminant_Analysis_compas_race_mutation_output.txt &
+```
+```
+python main_coverage.py --dataset=compas --algorithm=LogisticRegression --sensitive_index=3 --max_iter=100000 2>&1 | tee LogisticRegression_compas_race_coverage_output.txt &
+python main_coverage.py --dataset=compas --algorithm=TreeRegressor --sensitive_index=3 --max_iter=100000 2>&1 | tee TreeRegressor_compas_race_coverage_output.txt &
+python main_coverage.py --dataset=compas --algorithm=Decision_Tree_Classifier --sensitive_index=3 --max_iter=100000 2>&1 | tee Decision_Tree_Classifier_compas_race_coverage_output.txt &
+python main_coverage.py --dataset=compas --algorithm=Discriminant_Analysis --sensitive_index=3 --max_iter=100000 2>&1 | tee Discriminant_Analysis_compas_race_coverage_output.txt &
+```

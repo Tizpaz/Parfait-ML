@@ -3,6 +3,7 @@
 *.pyc
 *.csv
 *.txt
+*.out
 bank_age/
 census_gender/
 census_race/
