@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+ <inputs>
+  <!--C -->
+  <param0>
+    <name>C</name>
+    <type>float</type>
+    <min>0.1</min>
+    <max>50</max>
+    <def>1</def>
+  </param0>
+  <!--kernel -->
+  <param1>
+    <name>kernel</name>
+    <type>int</type>
+    <min>0</min>
+    <max>2</max>
+    <def>1</def>
+    <valtrans>poly</valtrans>
+    <valtrans>rbf</valtrans>
+    <valtrans>sigmoid</valtrans>
+  </param1>
+  <!--degree -->
+  <param2>
+    <name>degree</name>
+    <type>int</type>
+    <min>1</min>
+    <max>4</max>
+    <def>3</def>
+  </param2>
+  <!--gamma -->
+  <param3>
+    <name>gamma</name>
+    <type>int</type>
+    <min>0</min>
+    <max>1</max>
+    <def>0</def>
+    <valtrans>scale</valtrans>
+    <valtrans>auto</valtrans>
+  </param3>
+  <!--coef0 -->
+  <param4>
+    <name>coef0</name>
+    <type>float</type>
+    <min>-1.0</min>
+    <max>+1.0</max>
+    <def>0.0</def>
+  </param4>
+  <!--shrinking -->
+  <param5>
+    <name>shrinking</name>
+    <type>bool</type>
+    <min>0</min>
+    <max>1</max>
+    <def>1</def>
+  </param5>
+   <!--probability -->
+  <param6>
+    <name>probability</name>
+    <type>bool</type>
+    <min>0</min>
+    <max>1</max>
+    <def>0</def>
+  </param6>
+  <!--tol -->
+  <param7>
+    <name>tol</name>
+    <type>float</type>
+    <min>0.0</min>
+    <max>0.00001</max>
+    <def>0.001</def>
+  </param7>
+   <!--cache_size -->
+  <param8>
+    <name>cache_size</name>
+    <type>float</type>
+    <min>50.0</min>
+    <max>500.0</max>
+    <def>200.0</def>
+  </param8>
+  <!--class_weight -->
+ <param9>
+   <name>class_weight</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+   <valtrans>none</valtrans>
+   <valtrans>balanced</valtrans>
+ </param9>
+ <!--decision_function_shape -->
+ <param10>
+   <name>decision_function_shape</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+   <valtrans>ovr</valtrans>
+   <valtrans>ovo</valtrans>
+ </param10>
+ <!--break_ties -->
+ <param11>
+   <name>break_ties</name>
+   <type>bool</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+ </param11>
+</inputs>

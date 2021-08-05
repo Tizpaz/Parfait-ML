@@ -108,12 +108,11 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
         input_program = Discriminant_Analysis.disc_analysis
         input_program_tree = 'Discriminant_Analysis_Params.xml'
         num_args = 9
-    # this is not working as of June 2021
-    elif(program_name == "GaussianProc"):
-        import GaussianProc
-        input_program = GaussianProc.GaussianProcess
-        input_program_tree = 'Gaussian_Proc_Params.xml'
-        num_args = 10
+    elif(program_name == "SVM"):
+        import SVM
+        input_program = SVM.SVM
+        input_program_tree = 'SVM_Params.xml'
+        num_args = 12
 
     arr_min, arr_max, arr_type, arr_default = xml_parser_domains.xml_parser_domains(input_program_tree, num_args)
 
