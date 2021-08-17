@@ -1,7 +1,8 @@
 # ML-code-fairness
 ### Implementations for detecting and understanding biases in ML libraries
 ### Requirements
-Python 3.6, fairlearn (e.g., pip install fairlearn), standard python packages such as Numpy and Scikit-learn.
+Python 3.6, fairlearn (e.g., pip install fairlearn), standard python packages such as Numpy, Scikit-learn, pydotplus.  
+Grphviz installed in your system.
 
 Run the random search for adult census dataset with gender as sensitive feature:
 ```
