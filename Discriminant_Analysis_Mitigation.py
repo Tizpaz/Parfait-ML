@@ -5,6 +5,8 @@ from sklearn.datasets import make_classification
 
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from fairlearn.reductions import GridSearch, ExponentiatedGradient
+from fairlearn.reductions import EqualizedOdds
 
 # Generate datasets
 # def dataset_fixed_cov(n, dim):
@@ -29,8 +31,8 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 #     y = np.hstack((np.zeros(n), np.ones(n)))
 #     return X, y
 
-def disc_analysis(inp, X_train, X_test, y_train, y_test, sensitive_param = None):
-    arr, features = xml_parser.xml_parser('Discriminant_Analysis_Params.xml',inp)
+def disc_analysis_mitigation(inp, X_train, X_test, y_train, y_test, sensitive_param = None):
+    arr, features = xml_parser.xml_parser('Discriminant_Analysis_Mitigation_Params.xml',inp)
     # value for parameter_6
     if(arr[2]=="float"):
         # float does not work for bank dataset
@@ -57,12 +59,14 @@ def disc_analysis(inp, X_train, X_test, y_train, y_test, sensitive_param = None)
     if(arr[0]):
         try:
             # Linear Discriminant Analysis
-            lda = LinearDiscriminantAnalysis(solver=arr[1],
+            lda = ExponentiatedGradient(LinearDiscriminantAnalysis(solver=arr[1],
             shrinkage=arr[2],priors=arr[3],n_components=arr[4],
-            store_covariance=arr[5], tol=arr[6])
-            y_pred = lda.fit(X_train, y_train)
-            score = lda.score(X_test, y_test)
+            store_covariance=arr[5], tol=arr[6]),
+            constraints=EqualizedOdds(), eps = arr[9], max_iter = arr[10],
+            eta0 = arr[11], run_linprog_step = arr[12])
+            lda.fit(X_train, y_train, sensitive_features=X_train[:,sensitive_param-1])
             preds = lda.predict(X_test)
+            score = np.sum(y_test == preds)/len(y_test)
             return True, lda, arr, score, preds, features
         except ValueError as VE:
             print(VE)
@@ -76,11 +80,13 @@ def disc_analysis(inp, X_train, X_test, y_train, y_test, sensitive_param = None)
     else:
         try:
             # Quadratic Discriminant Analysis
-            qda = QuadraticDiscriminantAnalysis(priors=arr[3],
-                reg_param=arr[7],store_covariance=[8], tol=arr[6])
-            y_pred = qda.fit(X_train, y_train)
-            score = qda.score(X_test, y_test)
+            qda = ExponentiatedGradient(QuadraticDiscriminantAnalysis(priors=arr[3],
+                reg_param=arr[7],store_covariance=[8], tol=arr[6]),
+                constraints=EqualizedOdds(), eps = arr[9], max_iter = arr[10],
+                eta0 = arr[11], run_linprog_step = arr[12])
+            qda.fit(X_train, y_train, sensitive_features=X_train[:,sensitive_param-1])
             preds = qda.predict(X_test)
+            score = np.sum(y_test == preds)/len(y_test)
             return True, qda, arr, score, preds, features
             # print("here21")
         except ValueError as VE:

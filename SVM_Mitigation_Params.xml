@@ -80,4 +80,36 @@
    <valtrans>none</valtrans>
    <valtrans>balanced</valtrans>
  </param8>
+ <!--eps of ExponentiatedGradient -->
+<param9>
+  <name>eps</name>
+  <type>float</type>
+  <min>0.001</min>
+  <max>0.1</max>
+  <def>0.01</def>
+</param9>
+<!--max_iter of ExponentiatedGradient -->
+<param10>
+ <name>max_iter</name>
+ <type>int</type>
+ <min>20</min>
+ <max>70</max>
+ <def>50</def>
+</param10>
+<!--eta_0 of ExponentiatedGradient -->
+<param11>
+ <name>eta0</name>
+ <type>float</type>
+ <min>0.01</min>
+ <max>1.0</max>
+ <def>0.2</def>
+</param11>
+<!--run_linprog_step of ExpGradient -->
+<param12>
+  <name>run_linprog_step</name>
+  <type>bool</type>
+  <min>0</min>
+  <max>1</max>
+  <def>1</def>
+</param12>
 </inputs>

@@ -235,7 +235,17 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
         import SVM
         input_program = SVM.SVM
         input_program_tree = 'SVM_Params.xml'
-        num_args = 12
+        num_args = 9
+    elif(program_name == "LogisticRegressionMitigation"):
+        import LogisticRegressionMitigation
+        input_program = LogisticRegressionMitigation.logistic_regression_mitigation
+        input_program_tree = 'logistic_regression_mitigation_Params.xml'
+        num_args = 14
+    elif(program_name == "Decision_Tree_Classifier_Mitigation"):
+        import Decision_Tree_Classifier_Mitigation
+        input_program = Decision_Tree_Classifier_Mitigation.DecisionTreeMitigation
+        input_program_tree = 'Decision_Tree_Classifier_Mitigation_Params.xml'
+        num_args = 17
 
     arr_min, arr_max, arr_type, arr_default = xml_parser_domains.xml_parser_domains(input_program_tree, num_args)
 
@@ -288,36 +298,50 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                             inp.append(np.random.uniform(minVal,maxVal+0.00001))
                 else:
                     rnd = np.random.random()
-                    if rnd < 0.5:
-                        inp = promising_inputs_AOD[-1]
-                        # rng = range(len(promising_inputs_AOD))
-                        # sum_indicies = np.sum(rng)
-                        # index = np.random.choice(a = rng, p=[x/sum_indicies for x in rng])
-                        # inp = promising_inputs_AOD[index]
+                    if rnd < 0.8:
+                        if(rnd < 0.6):
+                            inp = promising_inputs_AOD[-1]
+                        else:
+                            rng = range(len(promising_inputs_AOD))
+                            sum_indicies = np.sum(rng)
+                            index = np.random.choice(a = rng, p=[x/sum_indicies for x in rng])
+                            inp = promising_inputs_AOD[index]
                     else:
-                        inp = promising_inputs_coverage[-1]
-                        # rng = range(len(promising_inputs_coverage))
-                        # sum_indicies = np.sum(rng)
-                        # index = np.random.choice(a = rng, p=[x/sum_indicies for x in rng])
-                        # inp = promising_inputs_coverage[index]
-
-                    print(inp)
+                        if(rnd < 0.95):
+                            inp = promising_inputs_coverage[-1]
+                        else:
+                            rng = range(len(promising_inputs_coverage))
+                            sum_indicies = np.sum(rng)
+                            index = np.random.choice(a = rng, p=[x/sum_indicies for x in rng])
+                            inp = promising_inputs_coverage[index]
                     index = np.random.randint(0,len(arr_min)-1)
                     if(arr_type[index] == 'bool'):
                         inp[index] = 1 - inp[index]
                     elif(arr_type[index] == 'int'):
                         minVal = int(arr_min[index])
                         maxVal = int(arr_max[index])
-                        newVal = np.random.randint(minVal,maxVal+1)
-                        trail = 0
-                        while newVal == inp[index] and trail < 3:
+                        rnd = np.random.random()
+                        if rnd < 0.4:
                             newVal = np.random.randint(minVal,maxVal+1)
-                            trail += 1
+                            trail = 0
+                            while newVal == inp[index] and trail < 3:
+                                newVal = np.random.randint(minVal,maxVal+1)
+                                trail += 1
+                        elif rnd < 0.7:
+                            newVal = inp[index] + 1
+                        else:
+                            newVal = inp[index] - 1
                         inp[index] = newVal
                     elif(arr_type[index] == 'float'):
                         minVal = float(arr_min[index])
                         maxVal = float(arr_max[index])
-                        inp[index] = np.random.uniform(minVal,maxVal+0.00001)
+                        rnd = np.random.random()
+                        if rnd < 0.5:
+                            inp[index] = np.random.uniform(minVal,maxVal+0.000001)
+                        elif rnd < 0.75:
+                            newVal = inp[index] + abs(maxVal-minVal)/100
+                        else:
+                            newVal = inp[index] - abs(maxVal-minVal)/100
 
             print(inp)
 
@@ -446,7 +470,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--dataset", help='The name of dataset: census, credit, bank ')
-    parser.add_argument("--algorithm", help='The name of dataset: census, credit, bank ')
+    parser.add_argument("--algorithm", help='The name of algorithm: logistic regression, SVM, Random Forest')
     parser.add_argument("--sensitive_index", help='The index for sensitive feature')
     parser.add_argument("--max_iter", help='The maximum number of iterations')
     args = parser.parse_args()
