@@ -22,13 +22,11 @@ def SVM(inp, X_train, X_test, y_train, y_test, sensitive_param = None):
         if(arr[0] == 'l1' and arr[1] == 'squared_hinge'):
             arr[2] = False
         arr[5] = 'ovr'
-        # clf = SVC(C = arr[0], kernel= arr[1], degree= arr[2], gamma = arr[3], coef0 = arr[4],
-        #         shrinking = arr[5], probability = arr[6], tol = arr[7], cache_size = arr[8],
-        #         class_weight = arr[9], verbose=False, max_iter = max_itr, decision_function_shape=arr[10],
-        #         break_ties = arr[11], random_state=2019)
+        arr[9] = 2019
+        arr[10] = 0
         clf = LinearSVC(penalty = arr[0], loss = arr[1], dual = arr[2], tol = arr[3], C = arr[4],
                         multi_class = arr[5], fit_intercept = arr[6], intercept_scaling = arr[7],
-                        class_weight = arr[8], verbose=0, random_state=2019, max_iter=1000)
+                        class_weight = arr[8], verbose=arr[10], random_state=arr[9], max_iter=arr[11])
         clf.fit(X_train, y_train)
         score = clf.score(X_test, y_test)
         preds = clf.predict(X_test)

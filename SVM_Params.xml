@@ -80,4 +80,31 @@
    <valtrans>none</valtrans>
    <valtrans>balanced</valtrans>
  </param8>
+ <!--random_state-->
+ <param9>
+   <name>random_state</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+   <valtrans>None</valtrans>
+   <valtrans>int</valtrans>
+ </param9>
+ <!--verbose-->
+ <param10>
+   <name>verbose</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+ </param10>
+ <!--max_iter -->
+ <param11>
+   <name>max_iter</name>
+   <type>int</type>
+   <min>950</min>
+   <max>1050</max>
+   <def>1000</def>
+ </param11>
+
 </inputs>
