@@ -1,7 +1,7 @@
 # ML-code-fairness
 ### Implementations for detecting and understanding biases in ML libraries
 ### Requirements
-Python 3.6, fairlearn (e.g., pip install fairlearn), standard python packages such as Numpy, Scikit-learn, pydotplus.  
+Python 3.6, fairlearn (e.g., pip install fairlearn), standard python packages such as Numpy, Scikit-learn, pydotplus, matplotlib.  
 Grphviz installed in your system.
 
 Run the random search for adult census dataset with gender as sensitive feature:
@@ -191,4 +191,20 @@ python main_SMBO.py --dataset=credit --algorithm=Decision_Tree_Classifier --sens
 ```
 python main_SMBO.py --dataset=bank --algorithm=LogisticRegression --sensitive_index=1
 python main_SMBO.py --dataset=bank --algorithm=Decision_Tree_Classifier --sensitive_index=1
+```
+To reproduce the results for research questions, run the following commands.   
+However, make sure that data from the runs are stored inside ``Dataset`` folder.   
+The results will be saved in the current folder as ``.csv`` files or inside ``Results`` folder.    
+To download the data for the current results in the paper, use this link.
+```
+python RQ-1.py
+```
+```
+python RQ-2.py
+```
+```
+python RQ-3.py
+```
+```
+python RQ-4.py
 ```
