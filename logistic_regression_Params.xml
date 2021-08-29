@@ -94,4 +94,51 @@
    <valtrans>none</valtrans>
    <valtrans>rand</valtrans>
  </param9>
+ <!--class_weight -->
+ <param10>
+   <name>class_weight</name>
+   <type>int</type>
+   <min>0</min>
+   <max>2</max>
+   <def>0</def>
+   <valtrans>None</valtrans>
+   <valtrans>balanced</valtrans>
+   <valtrans>weighted</valtrans>
+ </param10>
+ <!--random_state-->
+ <param11>
+   <name>random_state</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+   <valtrans>None</valtrans>
+   <valtrans>int</valtrans>
+ </param11>
+ <!--verbose-->
+ <param12>
+   <name>verbose</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+ </param12>
+ <!--warm_start-->
+ <param13>
+   <name>warm_start</name>
+   <type>bool</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+ </param13>
+ <!--n_jobs-->
+ <param14>
+   <name>n_jobs</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+   <valtrans>None</valtrans>
+   <valtrans>int</valtrans>
+ </param14>
 </inputs>

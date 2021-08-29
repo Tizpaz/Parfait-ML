@@ -39,10 +39,16 @@ def logistic_regression(inp, X_train, X_test, y_train, y_test, sensitive_param =
             arr[9] = None
         else:
             arr[9] = np.random.random()
+        arr[10] = None
+        arr[11] = 2019
+        arr[12] = 0
+        arr[14] = None
 
         clf = LogisticRegression(penalty=arr[1], dual = arr[2], tol = arr[3],
         C = arr[4], fit_intercept = arr[5], intercept_scaling = arr[6],
-        solver=arr[0], max_iter = arr[7], multi_class=arr[8], l1_ratio = arr[9], random_state=2019)
+        solver=arr[0], max_iter = arr[7], multi_class=arr[8], l1_ratio = arr[9],
+        random_state=arr[11], class_weight = arr[10], verbose = arr[12],
+        warm_start = arr[13], n_jobs=arr[14])
         clf.fit(X_train, y_train)
         score = clf.score(X_test, y_test)
         preds = clf.predict(X_test)

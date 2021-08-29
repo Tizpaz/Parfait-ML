@@ -215,7 +215,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
         import LogisticRegression
         input_program = LogisticRegression.logistic_regression
         input_program_tree = 'logistic_regression_Params.xml'
-        num_args = 10
+        num_args = 15
     elif(program_name == "Decision_Tree_Classifier"):
         import Decision_Tree_Classifier
         input_program = Decision_Tree_Classifier.DecisionTree
