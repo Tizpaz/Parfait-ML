@@ -102,7 +102,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
         import TreeRegressor
         input_program = TreeRegressor.TreeRegress
         input_program_tree = 'TreeRegressor_Params.xml'
-        num_args = 14
+        num_args = 18
     elif(program_name == "Discriminant_Analysis"):
         import Discriminant_Analysis
         input_program = Discriminant_Analysis.disc_analysis

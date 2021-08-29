@@ -71,7 +71,7 @@
     <name>min_impurity_decrease</name>
     <type>float</type>
     <min>0.0</min>
-    <max>0.0</max>
+    <max>1.0</max>
     <def>0.0</def>
   </param7>
   <!--bootstrap -->
@@ -124,5 +124,40 @@
     <valtrans>None</valtrans>
     <valtrans>int</valtrans>
   </param13>
-
+  <!--random_state-->
+  <param14>
+    <name>random_state</name>
+    <type>int</type>
+    <min>0</min>
+    <max>1</max>
+    <def>0</def>
+    <valtrans>None</valtrans>
+    <valtrans>int</valtrans>
+  </param14>
+  <!--verbose-->
+  <param15>
+    <name>verbose</name>
+    <type>int</type>
+    <min>0</min>
+    <max>1</max>
+    <def>0</def>
+  </param15>
+  <!--n_jobs-->
+  <param16>
+    <name>n_jobs</name>
+    <type>int</type>
+    <min>0</min>
+    <max>1</max>
+    <def>0</def>
+    <valtrans>None</valtrans>
+    <valtrans>int</valtrans>
+  </param16>
+  <!--min_impurity_split-->
+  <param17>
+    <name>min_impurity_split</name>
+    <type>float</type>
+    <min>0.0</min>
+    <max>1.0</max>
+    <def>0.0</def>
+  </param17>
 </inputs>

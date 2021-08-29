@@ -33,11 +33,15 @@ def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None):
 
     if arr[6] == 'None':
         arr[6] = None
-
+    arr[7] = 0.0
     arr[8] = True
 
     # if(arr[13] == 'None'):
     arr[13] = None
+    arr[14] = 2019
+    arr[15] = 0
+    arr[16] = None
+    arr[17] = None
     # else:
     #     arr[13] = random.randint(int(X_train.shape[0]/4), int(3*X_train.shape[0]/4))
 
@@ -47,7 +51,8 @@ def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None):
             min_weight_fraction_leaf=arr[4], max_features=arr[5],
             max_leaf_nodes=arr[6], min_impurity_decrease=arr[7],
             bootstrap=arr[8],oob_score=arr[9], warm_start=arr[10], ccp_alpha = arr[12],
-            max_samples = arr[13], random_state = 2019)
+            max_samples = arr[13], random_state = arr[14], verbose = arr[15], n_jobs = arr[16],
+            min_impurity_split = arr[17])
     except ValueError as VE:
         print("error2: " + str(VE))
         return False, None, arr, None, None, features
