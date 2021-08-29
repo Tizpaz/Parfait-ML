@@ -1,3 +1,4 @@
+# adapted from ADF https://github.com/pxzhang94/adf
 import sys
 sys.path.append("../")
 import numpy as np

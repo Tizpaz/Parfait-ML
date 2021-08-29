@@ -1,3 +1,4 @@
+# adapted from ADF https://github.com/pxzhang94/adf
 class census:
     """
     Configuration of dataset Census Income
