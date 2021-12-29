@@ -3,7 +3,7 @@ import time
 import xml_parser
 
 import numpy as np
-from sklearn.linear_model.logistic import LogisticRegression
+from sklearn.linear_model import LogisticRegression
 from fairlearn.reductions import GridSearch, ExponentiatedGradient
 from fairlearn.reductions import EqualizedOdds
 
