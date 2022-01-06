@@ -61,6 +61,10 @@ Explain scripts that can run and generate all results...
 * **Saeid Tizpaz-Niari** (saeid at utep.edu)
 
 
+## License
+This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details
+
+
 Run the random search for adult census dataset with gender as sensitive feature:
 ```
 python3 main_random.py --dataset=census --algorithm=LogisticRegression --sensitive_index=9 --max_iter=100000  2>&1 | tee LogisticRegression_census_gender_random_output.txt &
