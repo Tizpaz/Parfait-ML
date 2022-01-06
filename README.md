@@ -2,7 +2,7 @@
 
 # Parafait-ML: (PARameter FAIrness Testing for ML Libraries)
 This repository provides the tool and the evaluation subjects for the paper "Fairness-aware Configuration of Machine Learning Libraries" accepted for the technical track at [ICSE'2022](https://conf.researchr.org/track/icse-2022/icse-2022-papers).
-A pre-print of the paper is available [here](drive.google.com/file/d/1uafhRhKCBZLoEo8ledg343uQR2H24eHe).
+A pre-print of the paper is available [here](https://drive.google.com/file/d/1uafhRhKCBZLoEo8ledg343uQR2H24eHe).
 
 The repository includes:
 * a [Dockerfile](Dockerfile) to build the Docker script,
