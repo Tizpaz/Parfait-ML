@@ -54,7 +54,7 @@ Explain scripts that can run and generate all results...
 #### ...
 
 
-## General Instructions: How to apply QFuzz on new subjects
+## General Instructions: How to apply Parfait-ML on new subjects
 
 
 ## Developer and Maintainer
