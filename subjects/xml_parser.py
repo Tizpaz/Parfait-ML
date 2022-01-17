@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 def xml_parser(inp_file,inp):
     arr = []
     arr_feature = []
-    tree = ET.parse(inp_file)
+    tree = ET.parse("./subjects/" + inp_file)
     root = tree.getroot()
     cur = 0
     for str_arg in inp:

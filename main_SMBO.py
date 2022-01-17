@@ -1,6 +1,6 @@
 # Implementations based on Flash code: https://github.com/joymallyac/Fairway/blob/master/Multiobjective%20Optimization/optimizer/flash.py
 import sys
-sys.path.append("./")
+sys.path.append("./subjects/")
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
@@ -304,11 +304,11 @@ if __name__ == '__main__':
         print("----------------------------")
         # write to file
         if(algorithm == "LogisticRegression"):
-            with open(algorithm + "_" + dataset + "_" + sensitive_name + "_" + "SMBO" + "_" + str(int(start_time)) + "_res.csv", 'w') as f:
+            with open("./Dataset/" + algorithm + "_" + dataset + "_" + sensitive_name + "_" + "SMBO" + "_" + str(int(start_time)) + "_res.csv", 'w') as f:
                 f.write("C,penalty,solver,max_iter,score,AOD,EOD,counter,timer\n")
                 f.write(str(confing[0]) + "," + str(confing[1]) + "," + str(confing[2]) + "," + str(confing[3]) + "," + str(accuracy) + "," + str(AOD) + "," + str(EOD) + ",0," + str(end_time - start_time))
         if(algorithm == "Decision_Tree_Classifier"):
-            with open(algorithm + "_" + dataset + "_" + sensitive_name + "_" + "SMBO" + "_" + str(int(start_time)) + "_res.csv", 'w') as f:
+            with open("./Dataset/" + algorithm + "_" + dataset + "_" + sensitive_name + "_" + "SMBO" + "_" + str(int(start_time)) + "_res.csv", 'w') as f:
                 f.write("min_samples_split,criterion,splitter,min_samples_leaf,score,AOD,EOD,counter,timer\n")
                 f.write(str(confing[0]) + "," + str(confing[1]) + "," + str(confing[2]) + "," + str(confing[3]) + "," + str(accuracy) + "," + str(AOD) + "," + str(EOD) + ",0," + str(end_time - start_time))
     except TimeoutError as error:

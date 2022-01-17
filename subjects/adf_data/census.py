@@ -1,16 +1,20 @@
+# adapted from ADF https://github.com/pxzhang94/adf
 import numpy as np
-import sys
-sys.path.append("../")
+import sys, os
+sys.path.append('../')
+#sys.path.append(os.getcwd()+"../")
+print(sys.path)
 
-def compas_data():
+def census_data():
     """
-    Prepare the data of dataset Compas
+    Prepare the data of dataset Census Income
     :return: X, Y, input shape and number of classes
     """
     X = []
     Y = []
     i = 0
-    with open("datasets/compas", "r") as ins:
+
+    with open("subjects/datasets/census", "r") as ins:
         for line in ins:
             line = line.strip()
             line1 = line.split(',')
@@ -27,7 +31,7 @@ def compas_data():
     X = np.array(X, dtype=float)
     Y = np.array(Y, dtype=float)
 
-    input_shape = (None, 16)
+    input_shape = (None, 13)
     nb_classes = 2
 
     return X, Y, input_shape, nb_classes

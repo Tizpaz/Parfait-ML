@@ -3,16 +3,15 @@ import numpy as np
 import sys
 sys.path.append("../")
 
-def credit_data():
+def bank_data():
     """
-    Prepare the data of dataset German Credit
+    Prepare the data of dataset Bank Marketing
     :return: X, Y, input shape and number of classes
     """
     X = []
     Y = []
     i = 0
-
-    with open("datasets/credit_sample", "r") as ins:
+    with open("subjects/datasets/bank", "r") as ins:
         for line in ins:
             line = line.strip()
             line1 = line.split(',')
@@ -29,7 +28,7 @@ def credit_data():
     X = np.array(X, dtype=float)
     Y = np.array(Y, dtype=float)
 
-    input_shape = (None, 20)
+    input_shape = (None, 16)
     nb_classes = 2
 
     return X, Y, input_shape, nb_classes

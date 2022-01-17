@@ -5,7 +5,7 @@ def xml_parser_domains(inp_file, num_args):
     arr_max = []
     arr_type = []
     arr_default = []
-    tree = ET.parse(inp_file)
+    tree = ET.parse("./subjects/" + inp_file)
     root = tree.getroot()
     cur = 0
     for str_arg in range(num_args):
