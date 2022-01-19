@@ -32,6 +32,15 @@ from functools import wraps
 import errno
 import signal
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataset", help='The name of dataset: census, credit, bank ')
+parser.add_argument("--algorithm", help='The name of algorithm: logistic regression, SVM, Random Forest')
+parser.add_argument("--sensitive_index", help='The index for sensitive feature')
+parser.add_argument("--time_out", help='Max. running time', default = 14400, required=False)
+parser.add_argument("--max_iter", help='The maximum number of iterations', default = 100000, required=False)
+args = parser.parse_args()
+
+
 class TimeoutError(Exception):
     pass
 
@@ -208,7 +217,7 @@ def check_for_fairness(X, y_pred, y_true, a, X_new = None, Y_new = None):
     return metric_frame.by_group["true positive rate"], metric_frame.by_group["false positive rate"]
 
 
-@timeout(14400)
+@timeout(int(args.time_out))
 def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test, sensitive_param, group_0, group_1, sensitive_name, start_time):
     num_args = 0
     if(program_name == "LogisticRegression"):
@@ -444,8 +453,8 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                 high_diff_1 = diff_1
                 high_diff_2 = diff_2
 
-            print("Metric 1 different is " + str(diff_1))
-            print("Metric 2 different is " + str(diff_2))
+            print("Highest AOD difference is " + str(AOD_diff))
+            print("Highest EOD different is " + str(high_diff_1))
             print("score is " + str(score))
             print("counter: " + str(counter))
             print("---------------------------------------------------------")
@@ -468,12 +477,6 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", help='The name of dataset: census, credit, bank ')
-    parser.add_argument("--algorithm", help='The name of algorithm: logistic regression, SVM, Random Forest')
-    parser.add_argument("--sensitive_index", help='The index for sensitive feature')
-    parser.add_argument("--max_iter", help='The maximum number of iterations')
-    args = parser.parse_args()
 
     start_time = time.time()
     dataset = args.dataset
@@ -530,5 +533,6 @@ if __name__ == '__main__':
     except TimeoutError as error:
         print("Caght an error!" + str(error))
         print("--- %s seconds ---" % (time.time() - start_time))
+        print("test case filename is: " + algorithm + "_" +  dataset + "_" + sensitive_name + "_coverage_" + str(int(start_time)) + "_res.csv")
 
     print("--- %s seconds ---" % (time.time() - start_time))

@@ -4,6 +4,7 @@
 *.csv
 *.txt
 *.out
+*.png
 bank_age/
 census_gender/
 census_race/

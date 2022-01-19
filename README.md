@@ -35,12 +35,41 @@ If you use the pre-built [Docker image](#docker-image), the tool is already buil
 
 
 ### Getting Started with an example
-After succesfully setup *Parfait-ML*, you can try a simple example to check
-the basic functionality.
-Therefore, we prepared a simple run script for the *???* subject.
-It represents ???.
-You can find the run script here: [`evaluation/scripts/run_example.sh`](evaluation/scripts/run_example.sh).
-We have constructed all run scripts in the way that the compartment in the beginning defines the run configurations:
+After succesfully setup *Parfait-ML*, you can try a simple example to check the basic functionality.
+Therefore, we prepared a simple run script for the logistic regression subject over census dataset with race as sensitive attribute. The [`black-box fuzzer`](./main_mutation.py) interacts with the
+[`logistic regression algorithm`](subjects/LogisticRegression.py). The hyperparameter variables and their domains are specified
+as an XML file, see [`XML file for Logistic Regression`](subjects/LogisticRegression_Params.XML). The datasets are in [`datasets folder`](subjects/datasets/). For this example, we use [`census dataset`](subjects/datasets/census). 
+
+We first generate test cases. Throughout the paper, we run
+the test-case generation procedure for $4$, except for RQ4.
+Here, we run the black-box fuzzer for $10$ minutes:
+```
+python3 main_mutation.py --dataset=census --algorithm=LogisticRegression --sensitive_index=8 --time_out=600
+```
+where the column with index 8 is corresponds to `race` attribute of each sample individual. After $10$ minutes, the process
+ends and shows the test case filename, which is
+a CSV file. Let us name the file `csv_test_file`.
+We can issue `vi` command to explore the csv
+file (`Dataset/csv_test_file`) where each row is a configuration of hyperparameter
+values, their corresponding accuracy (score), AOD fairness metric,
+EOD metric (TPR), etc. 
+
+One can replace `main_mutation.py` with
+`main_random.py` to run independently random algorithm
+and with `main_coverage.py` to run graybox fuzzing algorithm.
+Similarly, dataset and algorithms can be replaced to
+perform experiments on other learning algorithms as well
+as datasets (full lists are available in the paper
+as well as in [`all scripts`](scripts.sh). Next,
+we run clustering and decision tree algorithm:
+```
+python clustering_DT.py --test_case=csv_test_file --clusters 2
+```
+where `csv_test_file` is the name of test-case outcome from the 
+last step and `clusters` show the number of cluster. This
+will produce clustering and decision tree models that can find
+inside `Results` folders (two png files with `clustered` and `tree`
+strings in the name).
 
 ### Complete Evaluation Reproduction
 Explain scripts that can run and generate all results...
