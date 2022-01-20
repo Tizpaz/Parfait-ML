@@ -23,7 +23,14 @@ We recommend to use Docker's [volume](https://docs.docker.com/engine/reference/r
 Furthermore, we recommend to run scripts in an own [screen session](https://linuxize.com/post/how-to-use-linux-screen/#starting-named-session) so that the results can be observed during execution.
 
 ## Tool
-*Parfait-ML* is a search-based software testing and statistical debugging tool to configure ML libraries fairly and detect fairness bugs in the configuration space of ML algorithms. More explanation of tool later (???).
+*Parfait-ML* is a search-based software testing and statistical debugging tool to configure ML libraries fairly and detect fairness bugs in the configuration space of ML algorithms. *Parfait-ML* focuses on the hyperparameters in training of ML models and whether they amplify or suppress discriminations in data-driven software. Some prominent examples of hyperparameters include l1 vs. l2 loss
+function in support vector machines, the maximum depth of a decision tree,
+and the number of layers/neurons in deep neural networks.
+
+*Parfait-ML* consists of two components: 1) search algorithms 2) data-driven explanations. The tool has three search algorithms to explore the space of ML hyperparameters in order to find what hyperparameter values can lead to high and low fairness. The current experiments include five ML algorithms and their hyperparameter spaces (e.g., logistic regression). To train ML algorithms, Parafait-ML includes four social-critical datasets (e.g., adult census income). During the search, the tool consider the default configuration of ML algorithm and its performance as a lower-bound on the functional accuracy requirements. Then, it selects inputs that satisfy the accuracy requirements and lead to an interesting fairness value. In addition, the coverage-based algorithm (graybox search) uses feedback from program internals to identify interesting inputs. For the fairness metric, we use EOD: the difference in true positive rates between two groups, and AOD: the average difference between true positive rates and false positive rates. We note that these metrics measure biases and higher values mean lower fairness. 
+
+After stopping the search algorithm (a default of 4 hours), we use clustering
+algorithms to partition the hyperparameter inputs genereated from the search based on fairness and accuracy values. Given two groups of inputs with low and high biases and similar accuracy, we infer CART decision trees that show what hyperparameters are common inside a cluster and what hyperparameters distinguish low fairness configurations from the high fairness one. 
 
 ### Requirements
 * Python 3.6
@@ -41,8 +48,8 @@ Therefore, we prepared a simple run script for the logistic regression subject o
 as an XML file, see [`XML file for Logistic Regression`](subjects/LogisticRegression_Params.XML). The datasets are in [`datasets folder`](subjects/datasets/). For this example, we use [`census dataset`](subjects/datasets/census). 
 
 We first generate test cases. Throughout the paper, we run
-the test-case generation procedure for $4$, except for RQ4.
-Here, we run the black-box fuzzer for $10$ minutes:
+the test-case generation procedure for 4, except for RQ4.
+Here, we run the black-box fuzzer for 10 minutes:
 ```
 python3 main_mutation.py --dataset=census --algorithm=LogisticRegression --sensitive_index=8 --time_out=600
 ```
