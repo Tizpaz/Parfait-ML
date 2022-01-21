@@ -2,7 +2,6 @@
 
 # Parafait-ML: (PARameter FAIrness Testing for ML Libraries)
 This repository provides the tool and the evaluation subjects for the paper "Fairness-aware Configuration of Machine Learning Libraries" accepted for the technical track at [ICSE'2022](https://conf.researchr.org/track/icse-2022/icse-2022-papers).
-A pre-print of the paper is available [here](https://drive.google.com/file/d/1uafhRhKCBZLoEo8ledg343uQR2H24eHe).
 
 The repository includes:
 * a [Dockerfile](Dockerfile) to build the Docker script,
@@ -27,10 +26,10 @@ Furthermore, we recommend to run scripts in an own [screen session](https://linu
 function in support vector machines, the maximum depth of a decision tree,
 and the number of layers/neurons in deep neural networks.
 
-*Parfait-ML* consists of two components: 1) search algorithms 2) data-driven explanations. The tool has three search algorithms to explore the space of ML hyperparameters in order to find what hyperparameter values can lead to high and low fairness. The current experiments include five ML algorithms and their hyperparameter spaces (e.g., logistic regression). To train ML algorithms, Parafait-ML includes four social-critical datasets (e.g., adult census income). During the search, the tool consider the default configuration of ML algorithm and its performance as a lower-bound on the functional accuracy requirements. Then, it selects inputs that satisfy the accuracy requirements and lead to an interesting fairness value. In addition, the coverage-based algorithm (graybox search) uses feedback from program internals to identify interesting inputs. For the fairness metric, we use EOD: the difference in true positive rates between two groups, and AOD: the average difference between true positive rates and false positive rates. We note that these metrics measure biases and higher values mean lower fairness. 
+*Parfait-ML* consists of two components: 1) search algorithms 2) data-driven explanations. The tool has three search algorithms to explore the space of ML hyperparameters in order to find what hyperparameter values can lead to high and low fairness. The current experiments include five ML algorithms and their hyperparameter spaces (e.g., logistic regression). To train ML algorithms, Parfait-ML includes four social-critical datasets (e.g., adult census income). During the search, the tool consider the default configuration of ML algorithm and its performance as a lower-bound on the functional accuracy requirements. Then, it selects inputs that satisfy the accuracy requirements and lead to an interesting fairness value. In addition, the coverage-based algorithm (graybox search) uses feedback from program internals to identify interesting inputs. For the fairness metric, we use EOD: the difference in true positive rates between two groups, and AOD: the average difference between true positive rates and false positive rates. We note that these metrics measure biases and higher values mean lower fairness. 
 
 After stopping the search algorithm (a default of 4 hours), we use clustering
-algorithms to partition the hyperparameter inputs genereated from the search based on fairness and accuracy values. Given two groups of inputs with low and high biases and similar accuracy, we infer CART decision trees that show what hyperparameters are common inside a cluster and what hyperparameters distinguish low fairness configurations from the high fairness one. 
+algorithms to partition the hyperparameter inputs generated from the search based on fairness and accuracy values. Given two groups of inputs with low and high biases and similar accuracy, we infer CART decision trees that show what hyperparameters are common inside a cluster and what hyperparameters distinguish low fairness configurations from the high fairness one. 
 
 ### Requirements
 * Python 3.6
@@ -92,9 +91,6 @@ Explain scripts that can run and generate all results...
 
 ## General Instructions: How to apply Parfait-ML on new subjects
 
-
-## Developer and Maintainer
-* **Saeid Tizpaz-Niari** (saeid at utep.edu)
 
 
 ## License
