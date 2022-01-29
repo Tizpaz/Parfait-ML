@@ -157,7 +157,8 @@ The program will generate two csv files: `RQ4-exp-6(m).csv` file
 shows the results used for Table 4 and `RQ4-SMBO.csv` file shows the
 results used for Table 5.
 ```
-vi 
+vi Results/RQ4-exp-6(m).csv
+vi Results/RQ4-SMBO.csv
 ```
 The results reported in the paper are
 included [`RQ4-Exp`](Results/RQ-Dataset/RQ4-exp-6(m).csv) and
