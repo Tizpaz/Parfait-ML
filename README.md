@@ -19,7 +19,7 @@ docker run -it --rm parfaitml:1.0.0
 We recommend to use Docker's [volume](https://docs.docker.com/engine/reference/run/#volume-shared-filesystems) feature to connect the docker container to the own file system so that Parfait-ML's results can be easily accessed.
 Furthermore, we recommend to run scripts in an own [screen session](https://linuxize.com/post/how-to-use-linux-screen/#starting-named-session) so that the results can be observed during execution.
 
-Note: The tool is initially biult for MacOS. Docker version
+Note: The tool is initially built for MacOS. Docker version
 with Ubuntu might experience some unexpected error.
 
 ## Tool
