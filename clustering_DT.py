@@ -201,7 +201,7 @@ for edge in edges:
         edge.set_label("True")
 attributes_name = set()
 for node in nodes:
-    if node.get_name() not in ('node', 'edge'):
+    if node.get_name() not in ('node', 'edge', '\"\\n\"'):
         values = clf.tree_.value[int(node.get_name())][0]
         if node.get_attributes()['label'].startswith('\"samples'):
             node.set_fillcolor(colors[np.argmax(values)])

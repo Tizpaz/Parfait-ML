@@ -13,11 +13,14 @@ The repository includes:
 A pre-built version of *Parfait-ML* is also available as [Docker image](https://hub.docker.com/r/????):
 ```
 docker pull ???
-docker run -it --rm ???
+docker run -it --rm parfaitml:1.0.0
 ```
 
 We recommend to use Docker's [volume](https://docs.docker.com/engine/reference/run/#volume-shared-filesystems) feature to connect the docker container to the own file system so that Parfait-ML's results can be easily accessed.
 Furthermore, we recommend to run scripts in an own [screen session](https://linuxize.com/post/how-to-use-linux-screen/#starting-named-session) so that the results can be observed during execution.
+
+Note: The tool is initially biult for MacOS. Docker version
+with Ubuntu might experience some unexpected error.
 
 ## Tool
 *Parfait-ML* is a search-based software testing and statistical debugging tool to configure ML libraries fairly and detect fairness bugs in the configuration space of ML algorithms. *Parfait-ML* focuses on the hyperparameters in training of ML models and whether they amplify or suppress discriminations in data-driven software. Some prominent examples of hyperparameters include l1 vs. l2 loss
@@ -30,12 +33,12 @@ After stopping the search algorithm (a default of 4 hours), we use clustering
 algorithms to partition the hyperparameter inputs generated from the search based on fairness and accuracy values. Given two groups of inputs with low and high biases and similar accuracy, we infer CART decision trees that show what hyperparameters are common inside a cluster and what hyperparameters distinguish low fairness configurations from the high fairness one. 
 
 ### Requirements
-* Python 3.6
+* Python 3.7
 * pip, libjpeg-dev (Ubuntu) or Grphviz (MacOS)
-* numpy, scipy, matplotlib, pydotplus, scikit-learn, fairlearn (installed with pip3)
+* numpy, scipy, matplotlib, pydotplus, scikit-learn==0.24.0, fairlearn (installed with pip3)
 
 ### How to setup Parfait-ML
-If you use the pre-built [Docker image](#docker-image), the tool is already built and ready to use so that you can skip this section. Otherwise, the installation of required packlages and libraries should be sufficient to run Parfait-ML.
+If you use the pre-built [Docker image](#docker-image), the tool is already built to use in Ubuntu base. Otherwise, the installation of required packlages and libraries should be sufficient to run Parfait-ML. Note: the tool is substantially tested in MacOS system.
 
 
 ### Getting Started with an example
@@ -67,7 +70,7 @@ as datasets (full lists are available in the paper
 as well as in [`all scripts`](scripts.sh). Next,
 we run clustering and decision tree algorithm:
 ```
-python clustering_DT.py --test_case=LogisticRegression_census_sex.csv --clusters 2
+python3 clustering_DT.py --test_case=LogisticRegression_census_sex.csv --clusters 2
 ```
 where `LogisticRegression_census_sex.csv` is the name of test-case outcome from the 
 last step and `clusters` show the number of cluster. This
@@ -77,7 +80,7 @@ result and another is for decision tree).
 
 ### Complete Evaluation Reproduction
 We include the script to run the search algorithms for the
-entire dataset:
+entire dataset (warning: it will run all experiments):
 ```
 sh script.sh
 ```
@@ -94,15 +97,15 @@ python3 main_mutation.py --dataset=census --algorithm=TreeRegressor --sensitive_
 ```
 Then, we need to apply clustering and decision tree inferences:
 ```
-python clustering_DT.py --test_case=TreeRegressor_census_sex.csv --clusters 3
-python clustering_DT.py --test_case=TreeRegressor_census_race.csv --clusters 2
+python3 clustering_DT.py --test_case=TreeRegressor_census_sex.csv --clusters 3
+python3 clustering_DT.py --test_case=TreeRegressor_census_race.csv --clusters 2
 ```
-Note: we include the experiment used in this paper for 10 runs in Dataset
-folder. As an example for sex and race:
+These will generate clustering and decision tree png file. Note: we include the experiment used in this paper for 10 runs in Dataset folder. As an example for sex and race:
 ```
-python clustering_DT.py --test_case=Run1/TreeRegressor_census_gender_mutation_res.csv --clusters 3
-python clustering_DT.py --test_case=Run1/TreeRegressor_census_race_mutation_res.csv --clusters 2
+python3 clustering_DT.py --test_case=Run1/TreeRegressor_census_gender_mutation_res.csv --clusters 3
+python3 clustering_DT.py --test_case=Run1/TreeRegressor_census_race_mutation_res.csv --clusters 2
 ```
+The corresponding files can be found in ['Run1_DT'](Results/1.Decision_Tree_Run_1).
 
 #### Table 2 (RQ 1)
 To produce the Table 2, please simply issue:
@@ -111,19 +114,26 @@ python3 RQ-1.py
 ```
 The program goes through each experiment with 10 runs, perform
 statistical analysis over the repeated experiemtns, and generate
-RQ1 table. The file used in the paper can be found in [`RQ1`](Results/RQ-Dataset/RQ1.csv).
+RQ1 table. This should take about one minute. The file used in the paper can be found in [`RQ1`](Results/RQ-Dataset/RQ1.csv).
+```
+vi Results/RQ-Dataset/RQ1.csv
+```
 
 #### Table 3 and Figure 3 (RQ 2)
 To produce the Table 3, please simply issue:
 ```
 python3 RQ-2.py
 ```
-The program will initiate and update the table RQ2 as it goes
-through the experiments. At the end, it will also calculate 95%
+The program will initiate RQ-2 table,
+update the table RQ2 as it goes
+through the experiments, and calculate 95%
 temporal progress of search algorithms as shown in Figure 3.
-`NOTE`: it might take over 1 hour
+`NOTE`: it might take over 90 minutes
 to complete the calculation. The table obtained in the paper can be found in [`RQ2`](Results/RQ-Dataset/RQ2.csv) and the temporal fuzzing can be found
 in [`Fuzzing Progress`](Results/Fuzzing_Progress).
+```
+vi Results/RQ-Dataset/RQ2.csv 
+```
 
 #### Figure 4 (RQ 3)
 To produce Figure 3 and Figure 4, please simply issue:
@@ -132,7 +142,7 @@ python3 RQ-3.py
 ```
 The program will create RQ1 to RQ10 folders, and each folder
 includes clustering and decision tree models for each experiment.
-`NOTE`: it might take over 1 hour
+`NOTE`: it might take over 90 minutes
 to complete the calculation.
 The results used in the paper can be found from [`1.Decision_Tree_Run1`](Results/1.Decision_Tree_Run_1) to [`10.Decision_Tree_Run1`](Results/10.Decision_Tree_Run_10).
 Also, the program will generate RQ3 table in [`RQ3`](Results/RQ-Dataset/RQ3.csv).
@@ -145,9 +155,14 @@ python3 RQ-4.py
 ```
 The program will generate two csv files: `RQ4-exp-6(m).csv` file
 shows the results used for Table 4 and `RQ4-SMBO.csv` file shows the
-results used for Table 5. The results reported in the paper are
+results used for Table 5.
+```
+vi 
+```
+The results reported in the paper are
 included [`RQ4-Exp`](Results/RQ-Dataset/RQ4-exp-6(m).csv) and
-[`RQ4-SMBO`](Results/RQ-Dataset/RQ4-SMBO.csv).
+[`RQ4-SMBO`](Results/RQ-Dataset/RQ4-SMBO.csv):
+
 
 ## How to apply Parfait-ML on new subjects
 Our framework allows a simple extension to include new dataset application as well as new algorithm. Currently, we support
@@ -156,8 +171,9 @@ Our framework allows a simple extension to include new dataset application as we
 To add a new dataset, the user needs to import the dataset into
 the [`subject/datasets`](subjects/datasets) and then provide an
 abstract class in the [`abstract dataset classes`](subjects/adf_data) similar to existing 5 datasets. Then, the user
-can build an instance of dataset in the search algorithms,
-e.g., see line 23 in [`random search`](main_random.py).
+can build an instance of dataset in the search algorithms
+and add the dataset name to the dataset dictionary,
+e.g., see lines 24, 318, and 319 in [`random search`](main_random.py).
 
 To add a new algorithm, the user needs to add the
 target program into the [`subject`](subjects/) folder, and

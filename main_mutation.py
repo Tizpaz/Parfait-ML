@@ -168,10 +168,14 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
     highest_acc_inp = None
     AOD_diff = 0.0
 
-    if args.output == "":
+    if args.output == None:
         filename = "./Dataset/" + program_name + "_" +  dataset + "_" + sensitive_name + "_mutation_" + str(int(start_time)) + "_res.csv"
-    else:
+    elif args.output == "":
+        filename = "./Dataset/" + program_name + "_" +  dataset + "_" + sensitive_name + "_mutation_" + str(int(start_time)) + "_res.csv"
+    elif ".csv" in args.output:
         filename = "./Dataset/" + args.output
+    else:
+        filename = "./Dataset/" + args.output + ".csv"
 
     with open(filename, 'w') as f:
         for counter in range(max_iter):
@@ -401,6 +405,5 @@ if __name__ == '__main__':
     except TimeoutError as error:
         print("Caght an error!" + str(error))
         print("--- %s seconds ---" % (time.time() - start_time))
-        print("test case filename is: " + algorithm + "_" +  dataset + "_" + sensitive_name + "_mutation_" + str(int(start_time)) + "_res.csv")
 
     print("--- %s seconds ---" % (time.time() - start_time))

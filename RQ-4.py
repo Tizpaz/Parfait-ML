@@ -139,7 +139,10 @@ with open("Results/RQ4-Exp-6(m).csv", 'w') as f:
         num_inp_lst = np.array(key_num_inp[key])[:,0]
         num_inp_mean = np.mean(num_inp_lst)
         num_inp_confidence = st.t.interval(0.95, len(num_inp_lst)-1, loc=np.mean(num_inp_lst), scale=st.sem(num_inp_lst))
-        f.write(str(round(num_inp_mean)) + " (+/- " + str(round(num_inp_mean-num_inp_confidence[0])) + ")")
+        try:
+            f.write(str(round(num_inp_mean)) + " (+/- " + str(round(num_inp_mean-num_inp_confidence[0])) + ")")
+        except:
+            f.write("0 (+/- 0)")
         f.write(",")
         acc_overall_lst = np.array(key_acc[key])
         acc_overall_min = acc_overall_lst[:,0]
@@ -341,7 +344,10 @@ with open("Results/RQ4-SMBO.csv", 'w') as f:
         num_inp_lst = np.array(key_num_inp[key])
         num_inp_mean = np.nanmean(num_inp_lst)
         num_inp_confidence = st.t.interval(0.95, len(num_inp_lst)-1, loc=np.mean(num_inp_lst), scale=st.sem(num_inp_lst))
-        f.write(str(round(num_inp_mean)) + " (+/- " + str(round(num_inp_mean-num_inp_confidence[0])) + ")")
+        try:
+            f.write(str(round(num_inp_mean)) + " (+/- " + str(round(num_inp_mean-num_inp_confidence[0])) + ")")
+        except:
+            f.write("0 (+/- 0)")
         f.write(",")
         time_overall_lst = np.array(key_time_overall[key])
         time_overall_min = time_overall_lst
@@ -524,7 +530,10 @@ with open("Results/RQ4-SMBO_2.csv", 'w') as f:
         num_inp_lst = np.array(key_num_inp[key])
         num_inp_mean = np.nanmean(num_inp_lst)
         num_inp_confidence = st.t.interval(0.95, len(num_inp_lst)-1, loc=np.mean(num_inp_lst), scale=st.sem(num_inp_lst))
-        f.write(str(round(num_inp_mean)) + " (+/- " + str(round(num_inp_mean-num_inp_confidence[0])) + ")")
+        try:
+            f.write(str(round(num_inp_mean)) + " (+/- " + str(round(num_inp_mean-num_inp_confidence[0])) + ")")
+        except:
+            f.write("0 (+/- 0)")
         f.write(",")
         time_overall_lst = np.array(key_time_overall[key])
         time_overall_min = time_overall_lst

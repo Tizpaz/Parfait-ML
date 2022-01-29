@@ -35,6 +35,7 @@ import signal
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", help='The name of dataset: census, credit, bank ')
 parser.add_argument("--algorithm", help='The name of algorithm: logistic regression, SVM, Random Forest')
+parser.add_argument("--output", help='The name of output file', required=False)
 parser.add_argument("--sensitive_index", help='The index for sensitive feature')
 parser.add_argument("--time_out", help='Max. running time', default = 14400, required=False)
 parser.add_argument("--max_iter", help='The maximum number of iterations', default = 100000, required=False)
@@ -277,8 +278,15 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
     highest_acc_inp = None
     AOD_diff = 0.0
 
-    filename = "./Dataset/" + program_name + "_" +  dataset + "_" + sensitive_name + "_coverage_" + str(int(start_time)) + "_res.csv"
-
+    if args.output == None:
+        filename = "./Dataset/" + program_name + "_" +  dataset + "_" + sensitive_name + "_coverage_" + str(int(start_time)) + "_res.csv"
+    elif args.output == "":
+        filename = "./Dataset/" + program_name + "_" +  dataset + "_" + sensitive_name + "_coverage_" + str(int(start_time)) + "_res.csv"
+    elif ".csv" in args.output:
+        filename = "./Dataset/" + args.output
+    else:
+        filename = "./Dataset/" + args.output + ".csv"
+    
     with open(filename, 'w') as f:
         for counter in range(max_iter):
             inp = []
@@ -533,6 +541,5 @@ if __name__ == '__main__':
     except TimeoutError as error:
         print("Caght an error!" + str(error))
         print("--- %s seconds ---" % (time.time() - start_time))
-        print("test case filename is: " + algorithm + "_" +  dataset + "_" + sensitive_name + "_coverage_" + str(int(start_time)) + "_res.csv")
 
     print("--- %s seconds ---" % (time.time() - start_time))
