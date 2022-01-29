@@ -1,5 +1,3 @@
-[![DOI](https://zenodo.org/badge/???)](???) 
-
 # Parafait-ML: (PARameter FAIrness Testing for ML Libraries)
 This repository provides the tool and the evaluation subjects for the paper "Fairness-aware Configuration of Machine Learning Libraries" accepted for the technical track at [ICSE'2022](https://conf.researchr.org/track/icse-2022/icse-2022-papers).
 
@@ -42,7 +40,7 @@ If you use the pre-built [Docker image](#docker-image), the tool is already buil
 
 ### Getting Started with an example
 After succesfully setup *Parfait-ML*, you can try a simple example to check the basic functionality.
-Therefore, we prepared a simple run script for the logistic regression subject over census dataset with race as sensitive attribute. The [`black-box fuzzer`](./main_mutation.py) interacts with the
+We prepared a simple run script for the logistic regression subject over census dataset with race as sensitive attribute. The [`black-box fuzzer`](./main_mutation.py) interacts with the
 [`logistic regression algorithm`](subjects/LogisticRegression.py). The hyperparameter variables and their domains are specified
 as an XML file, see [`XML file for Logistic Regression`](subjects/LogisticRegression_Params.XML). The datasets are in [`datasets folder`](subjects/datasets/). For this example, we use [`census dataset`](subjects/datasets/census). 
 
@@ -50,13 +48,13 @@ We first generate test cases. Throughout the paper, we run
 the test-case generation procedure for 4, except for RQ4.
 Here, we run the black-box fuzzer for 10 minutes:
 ```
-python3 main_mutation.py --dataset=census --algorithm=LogisticRegression --sensitive_index=8 --time_out=600
+python3 main_mutation.py --dataset=census --algorithm=LogisticRegression --sensitive_index=8 --output=LogisticRegression_census_sex.csv --time_out=600
 ```
 where the column with index 8 is corresponds to `race` attribute of each sample individual. After $10$ minutes, the process
 ends and shows the test case filename, which is
-a CSV file. Let us name the file `csv_test_file`.
+a CSV file. 
 We can issue `vi` command to explore the csv
-file (`Dataset/csv_test_file`) where each row is a configuration of hyperparameter
+file (`Dataset/LogisticRegression_census_sex.csv`) where each row is a configuration of hyperparameter
 values, their corresponding accuracy (score), AOD fairness metric,
 EOD metric (TPR), etc. 
 
@@ -69,49 +67,90 @@ as datasets (full lists are available in the paper
 as well as in [`all scripts`](scripts.sh). Next,
 we run clustering and decision tree algorithm:
 ```
-python clustering_DT.py --test_case=csv_test_file --clusters 2
+python clustering_DT.py --test_case=LogisticRegression_census_sex.csv --clusters 2
 ```
-where `csv_test_file` is the name of test-case outcome from the 
+where `LogisticRegression_census_sex.csv` is the name of test-case outcome from the 
 last step and `clusters` show the number of cluster. This
 will produce clustering and decision tree models that can find
-inside `Results` folders (two png files with `clustered` and `tree`
-strings in the name).
+inside `Results` folders (two png files: one is for clustering
+result and another is for decision tree).
 
 ### Complete Evaluation Reproduction
-Explain scripts that can run and generate all results...
-
+We include the script to run the search algorithms for the
+entire dataset:
 ```
-???
+sh script.sh
+```
+By default, every experiment will run for 4 hours, and one needs
+to repeat the experiments 10 times to reproduce RQ1 to RQ4.
+The experiments used in the paper is included in the Dataset folder.
+
+#### Figure 2 (mutation search + census with sex and race)
+We need to first generate test cases using black-box mutation algorithm
+for gender (sex) attribute wit index 9 (left) and race attribute with index 8 (right):
+```
+python3 main_mutation.py --dataset=census --algorithm=TreeRegressor --sensitive_index=9 --output=TreeRegressor_census_sex.csv --time_out=14400
+python3 main_mutation.py --dataset=census --algorithm=TreeRegressor --sensitive_index=8 --output=TreeRegressor_census_race.csv --time_out=14400
+```
+Then, we need to apply clustering and decision tree inferences:
+```
+python clustering_DT.py --test_case=TreeRegressor_census_sex.csv --clusters 3
+python clustering_DT.py --test_case=TreeRegressor_census_race.csv --clusters 2
+```
+Note: we include the experiment used in this paper for 10 runs in Dataset
+folder. As an example for sex and race:
+```
+python clustering_DT.py --test_case=Run1/TreeRegressor_census_gender_mutation_res.csv --clusters 3
+python clustering_DT.py --test_case=Run1/TreeRegressor_census_race_mutation_res.csv --clusters 2
 ```
 
-#### Table 1
+#### Table 2 (RQ 1)
+To produce the Table 2, please simply issue:
+```
+python3 RQ-1.py
+```
+The program goes through each experiment with 10 runs, perform
+statistical analysis over the repeated experiemtns, and generate
+RQ1 table. The file used in the paper can be found in [`RQ1`](Results/RQ-Dataset/RQ1.csv).
 
-#### ...
+#### Table 3 and Figure 3 (RQ 2)
+To produce the Table 3, please simply issue:
+```
+python3 RQ-2.py
+```
+The program will initiate and update the table RQ2 as it goes
+through the experiments. At the end, it will also calculate 95%
+temporal progress of search algorithms as shown in Figure 3.
+`NOTE`: it might take over 1 hour
+to complete the calculation. The table obtained in the paper can be found in [`RQ2`](Results/RQ-Dataset/RQ2.csv) and the temporal fuzzing can be found
+in [`Fuzzing Progress`](Results/Fuzzing_Progress).
 
+#### Figure 4 (RQ 3)
+To produce Figure 3 and Figure 4, please simply issue:
+```
+python3 RQ-3.py
+```
+The program will create RQ1 to RQ10 folders, and each folder
+includes clustering and decision tree models for each experiment.
+`NOTE`: it might take over 1 hour
+to complete the calculation.
+The results used in the paper can be found from [`1.Decision_Tree_Run1`](Results/1.Decision_Tree_Run_1) to [`10.Decision_Tree_Run1`](Results/10.Decision_Tree_Run_10).
+Also, the program will generate RQ3 table in [`RQ3`](Results/RQ-Dataset/RQ3.csv).
+The table results have used to report statistics in section 6.6.
+
+#### Table 4 and Table 5 (RQ 4)
+To produce Table 4 and Table 5, please simply issue:
+```
+python3 RQ-4.py
+```
+The program will generate two csv files: `RQ4-exp-6(m).csv` file
+shows the results used for Table 4 and `RQ4-SMBO.csv` file shows the
+results used for Table 5. The results reported in the paper are
+included [`RQ4-Exp`](Results/RQ-Dataset/RQ4-exp-6(m).csv) and
+[`RQ4-SMBO`](Results/RQ-Dataset/RQ4-SMBO.csv).
 
 ## General Instructions: How to apply Parfait-ML on new subjects
 
 
-
 ## License
 This project is licensed under the Apache-2.0 License - see the [LICENSE](LICENSE) file for details
-
-
-To reproduce the results for research questions, run the following commands.   
-However, make sure that data from the runs are stored inside ``Dataset`` folder.   
-The results will be saved in the current folder as ``.csv`` files or inside ``Results`` folder.    
-To download the input data to run the following commands, use [this link](https://drive.google.com/drive/folders/1CVe5-tow5NiKynRDF1BFwU-gVJr1obh5).
-```
-python3 RQ-1.py
-```
-```
-python3 RQ-2.py
-```
-```
-python3 RQ-3.py
-```
-```
-python3 RQ-4.py
-```
-The current results of these experiments are available at
-[this link](https://drive.google.com/drive/folders/13figGs64BcPwwcLvQRKsQMz71wcU4UQw).

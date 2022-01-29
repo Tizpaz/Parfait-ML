@@ -61,19 +61,17 @@ algorithm_dataset_information = {}
 algorithm_dataset_parameters_value = {}
 
 
-# In[4]:
-
 @timeout(120)
 def ClusterFunc(X,k):
     return SpectralClustering(n_clusters=k, random_state=10).fit(X)
-
-# In[5]:
 
 
 for drs in directories:
     if not drs.startswith("Run"):
         continue
     for filename in os.listdir("Dataset" + "/" + drs):
+        if drs not in os.listdir("Results/"):
+            os.mkdir("Results" + "/" + drs)
         try:
             if filename.endswith("res.csv"):
                 print(drs + "/" + filename)

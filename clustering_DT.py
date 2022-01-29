@@ -37,6 +37,8 @@ def ClusterFunc(X,k):
 
 df = pd.read_csv("Dataset" + "/" + filename)
 df = df.where(pd.notnull(df), "None")
+if "/" in filename:
+    filename = filename.split("/")[-1]
 # remove last row since it can be null row
 df = df[:-1]
 # make sure to only inclue test cases generated up to 4 hours

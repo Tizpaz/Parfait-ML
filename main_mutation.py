@@ -36,6 +36,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", help='The name of dataset: census, credit, bank ')
 parser.add_argument("--algorithm", help='The name of algorithm: logistic regression, SVM, Random Forest')
 parser.add_argument("--sensitive_index", help='The index for sensitive feature')
+parser.add_argument("--output", help='The name of output file', required=False)
 parser.add_argument("--time_out", help='Max. running time', default = 14400, required=False)
 parser.add_argument("--max_iter", help='The maximum number of iterations', default = 100000, required=False)
 args = parser.parse_args()
@@ -167,7 +168,10 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
     highest_acc_inp = None
     AOD_diff = 0.0
 
-    filename = "./Dataset/" + program_name + "_" +  dataset + "_" + sensitive_name + "_mutation_" + str(int(start_time)) + "_res.csv"
+    if args.output == "":
+        filename = "./Dataset/" + program_name + "_" +  dataset + "_" + sensitive_name + "_mutation_" + str(int(start_time)) + "_res.csv"
+    else:
+        filename = "./Dataset/" + args.output
 
     with open(filename, 'w') as f:
         for counter in range(max_iter):
