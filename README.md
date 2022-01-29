@@ -7,7 +7,7 @@ The repository includes:
 * the source code of *Parfait-ML*,
 * the evaluation subjects: [subjects](./subjects),
 * the pre-built evaluation all results: [Dataset](./Dataset), and
-* the scripts to rerun all experiments: [scripts](./script.sh).
+* the scripts to rerun all search experiments: [scripts](./script.sh).
 
 ## Docker Image
 A pre-built version of *Parfait-ML* is also available as [Docker image](https://hub.docker.com/r/????):
@@ -149,7 +149,26 @@ results used for Table 5. The results reported in the paper are
 included [`RQ4-Exp`](Results/RQ-Dataset/RQ4-exp-6(m).csv) and
 [`RQ4-SMBO`](Results/RQ-Dataset/RQ4-SMBO.csv).
 
-## General Instructions: How to apply Parfait-ML on new subjects
+## How to apply Parfait-ML on new subjects
+Our framework allows a simple extension to include new dataset application as well as new algorithm. Currently, we support
+5 dataset applications and 10 distinct ML algorithms. 
+
+To add a new dataset, the user needs to import the dataset into
+the [`subject/datasets`](subjects/datasets) and then provide an
+abstract class in the [`abstract dataset classes`](subjects/adf_data) similar to existing 5 datasets. Then, the user
+can build an instance of dataset in the search algorithms,
+e.g., see line 23 in [`random search`](main_random.py).
+
+To add a new algorithm, the user needs to add the
+target program into the [`subject`](subjects/) folder, and
+define the interface function, e.g., see line 7 for
+[`Decision Tree`](subjects/Decision_Tree_Classifier.py).
+The interface function includes the input file (will be fed
+by the search algorithm, train data, test data, train label,
+and sensitive feature). The next step is to introduce the
+interface in the search drivers, e.g., see lines 100
+to 150 in [`random search`](main_random.py) where the
+driver connects to 10 existing algorithm.
 
 
 ## License
