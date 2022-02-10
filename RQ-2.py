@@ -91,19 +91,28 @@ with open("Results/RQ2.csv", 'w') as f:
         for search in searches:
             num_inputs_data_average = np.mean(num_inputs_data[search])
             num_inputs_data_CI = st.t.interval(0.95, len(num_inputs_data[search])-1, loc=num_inputs_data_average, scale=st.sem(num_inputs_data[search]))
-            f.write(str(round(num_inputs_data_average)) + " (+/- " + str(round(num_inputs_data_average - num_inputs_data_CI[0])) + ")")
+            try:
+                f.write(str(round(num_inputs_data_average)) + " (+/- " + str(round(num_inputs_data_average - num_inputs_data_CI[0])) + ")")
+            except:
+                f.write("0 (+/- 0)")
             f.write(",")
 
         for search in searches:
             key_max_AOD_data_average = np.mean(key_max_AOD_data[search])
             key_max_AOD_data_CI = st.t.interval(0.95, len(key_max_AOD_data[search])-1, loc=key_max_AOD_data_average, scale=st.sem(key_max_AOD_data[search]))
-            f.write(str(round(key_max_AOD_data_average * 100,1)) + "\% (+/- " + str(round((key_max_AOD_data_average - key_max_AOD_data_CI[0]) * 100, 1)) + "\%)")
+            try:
+                f.write(str(round(key_max_AOD_data_average * 100,1)) + "\% (+/- " + str(round((key_max_AOD_data_average - key_max_AOD_data_CI[0]) * 100, 1)) + "\%)")
+            except:
+                f.write("0 (+/- 0)")
             f.write(",")
 
         for search in searches:
             key_max_TPR_data_average = np.mean(key_max_TPR_data[search])
             key_max_TPR_data_CI = st.t.interval(0.95, len(key_max_TPR_data[search])-1, loc=key_max_TPR_data_average, scale=st.sem(key_max_TPR_data[search]))
-            f.write(str(round(key_max_TPR_data_average * 100,1)) + "\% (+/- " + str(round((key_max_TPR_data_average - key_max_TPR_data_CI[0]) * 100, 1)) + "\%)")
+            try:
+                f.write(str(round(key_max_TPR_data_average * 100,1)) + "\% (+/- " + str(round((key_max_TPR_data_average - key_max_TPR_data_CI[0]) * 100, 1)) + "\%)")
+            except:
+                f.write("0 (+/- 0)")
             f.write(",")
         f.write("\n")
 

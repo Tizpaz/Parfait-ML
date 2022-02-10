@@ -10,6 +10,10 @@ The repository includes:
 * the scripts to rerun all search experiments: [scripts](./script.sh).
 
 ## Docker File
+```
+docker pull tizpaz/parfaitml:1.0.0
+docker run --rm -it  parfait:1.0.0
+```
 We recommend to use Docker's [volume](https://docs.docker.com/engine/reference/run/#volume-shared-filesystems) feature to connect the docker container to the own file system so that Parfait-ML's results can be easily accessed.
 Furthermore, we recommend to run scripts in an own [screen session](https://linuxize.com/post/how-to-use-linux-screen/#starting-named-session) so that the results can be observed during execution.
 
