@@ -28,11 +28,7 @@ from adf_data.bank import bank_data
 from adf_data.compas import compas_data
 import xml_parser
 import xml_parser_domains
-
-
-from functools import wraps
-import errno
-import signal
+from Timeout import timeout
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", help='The name of dataset: census, credit, bank ')
@@ -43,56 +39,16 @@ parser.add_argument("--time_out", help='Max. running time', default = 14400, req
 parser.add_argument("--max_iter", help='The maximum number of iterations', default = 100000, required=False)
 args = parser.parse_args()
 
-class TimeoutError(Exception):
-    pass
-
-def timeout(seconds=600):
-    def decorator(func):
-        def _handle_timeout(signum, frame):
-            raise TimeoutError("time_error")
-
-        def wrapper(*args, **kwargs):
-            signal.signal(signal.SIGALRM, _handle_timeout)
-            signal.alarm(seconds)
-            try:
-                result = func(*args, **kwargs)
-            finally:
-                signal.alarm(0)
-            return result
-
-        return wraps(func)(wrapper)
-
-    return decorator
-
-
 def check_for_fairness(X, y_pred, y_true, a, X_new = None, Y_new = None):
     parities = []
     impacts = []
     eq_odds = []
     metric_frames = []
     metrics = {
-        'accuracy': accuracy_score,
-        'precision': precision_score,
-        'recall': recall_score,
         'false positive rate': false_positive_rate,
-        'true positive rate': true_positive_rate,
-        'selection rate': selection_rate,
-        'count': lambda y_true, y_pred: y_true.shape[0]
+        'true positive rate': true_positive_rate
     }
-
-    parity = demographic_parity_difference(y_true = y_true, y_pred = y_pred, sensitive_features = a)
-    di = demographic_parity_ratio(y_true = y_true, y_pred = y_pred, sensitive_features = a)
-    eod = equalized_odds_difference(y_true = y_true, y_pred = y_pred, sensitive_features = a)
     metric_frame = MetricFrame(metrics, y_true, y_pred, sensitive_features=a)
-    print(metric_frame.by_group)
-    parities.append(parity)
-    impacts.append(di)
-    eq_odds.append(eod)
-    metric_frames.append(metric_frame)
-    print("demographic_parity_difference is " + str(parity))
-    print("demographic_parity_ratio is " + str(di))
-    print("equalized_odds_difference is " + str(eod))
-    print("------------------------------------------")
     return metric_frame.by_group["true positive rate"], metric_frame.by_group["false positive rate"]
 
 @timeout(int(args.time_out))

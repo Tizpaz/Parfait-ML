@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[9]:
-
 
 import pandas as pd
 import numpy as np
@@ -12,8 +10,6 @@ import os
 import scipy.stats as st
 import math
 
-
-# In[31]:
 
 
 directories = os.listdir("Dataset")
