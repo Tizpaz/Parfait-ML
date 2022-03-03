@@ -1,5 +1,5 @@
 # Parafait-ML: (PARameter FAIrness Testing for ML Libraries)
-This repository provides the tool and the evaluation subjects for the paper "Fairness-aware Configuration of Machine Learning Libraries" accepted for the technical track at [ICSE'2022](https://conf.researchr.org/track/icse-2022/icse-2022-papers).
+This repository provides the tool and the evaluation subjects for the paper "Fairness-aware Configuration of Machine Learning Libraries" accepted for the technical track at [ICSE'2022](https://arxiv.org/abs/2202.06196).
 
 The repository includes:
 * a [Dockerfile](Dockerfile) to build the Docker script,
@@ -11,7 +11,6 @@ The repository includes:
 
 ## Docker File
 ```
-docker pull tizpaz/parfaitml:1.0.0
 docker run --rm -it  parfait:1.0.0
 ```
 We recommend to use Docker's [volume](https://docs.docker.com/engine/reference/run/#volume-shared-filesystems) feature to connect the docker container to the own file system so that Parfait-ML's results can be easily accessed.
