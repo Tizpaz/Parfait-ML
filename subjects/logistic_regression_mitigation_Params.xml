@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+ <inputs>
+  <!--solver -->
+  <param0>
+    <name>solver</name>
+    <type>int</type>
+    <min>0</min>
+    <max>4</max>
+    <def>2</def>
+    <valtrans>newton-cg</valtrans>
+    <valtrans>lbfgs</valtrans>
+    <valtrans>liblinear</valtrans>
+    <valtrans>sag</valtrans>
+    <valtrans>saga</valtrans>
+  </param0>
+  <!--penalty -->
+  <param1>
+    <name>penalty</name>
+    <type>int</type>
+    <min>0</min>
+    <max>4</max>
+    <def>1</def>
+    <valtrans>l1</valtrans>
+    <valtrans>l2</valtrans>
+    <valtrans>elasticnet</valtrans>
+    <valtrans>none</valtrans>
+  </param1>
+  <!--dual -->
+  <param2>
+    <name>dual</name>
+    <type>bool</type>
+    <min>0</min>
+    <max>1</max>
+    <def>0</def>
+  </param2>
+  <!--tol -->
+  <param3>
+    <name>tol</name>
+    <type>float</type>
+    <min>0.0</min>
+    <max>1.0</max>
+    <def>0.0001</def>
+  </param3>
+  <!--C -->
+  <param4>
+    <name>C</name>
+    <type>float</type>
+    <min>0.01</min>
+    <max>100.0</max>
+    <def>10.0</def>
+  </param4>
+  <!--fit_intercept -->
+  <param5>
+    <name>fit_intercept</name>
+    <type>bool</type>
+    <min>0</min>
+    <max>1</max>
+    <def>1</def>
+  </param5>
+   <!--intercept_scaling -->
+  <param6>
+    <name>intercept_scaling</name>
+    <type>float</type>
+    <min>0.0</min>
+    <max>10.0</max>
+    <def>1.0</def>
+  </param6>
+  <!--max_iteration -->
+  <param7>
+    <name>max_iteration</name>
+    <type>int</type>
+    <min>95</min>
+    <max>105</max>
+    <def>100</def>
+  </param7>
+   <!--multi_class -->
+  <param8>
+    <name>multi_class</name>
+    <type>int</type>
+    <min>0</min>
+    <max>2</max>
+    <def>0</def>
+    <valtrans>ovr</valtrans>
+    <valtrans>multinomial</valtrans>
+    <valtrans>auto</valtrans>
+  </param8>
+  <!--l1_ratio -->
+ <param9>
+   <name>l1_ratio</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+   <valtrans>none</valtrans>
+   <valtrans>rand</valtrans>
+ </param9>
+ <!--eps of ExponentiatedGradient -->
+<param10>
+  <name>eps</name>
+  <type>float</type>
+  <min>0.001</min>
+  <max>0.1</max>
+  <def>0.01</def>
+</param10>
+<!--max_iter of ExponentiatedGradient -->
+<param11>
+ <name>max_iter</name>
+ <type>int</type>
+ <min>20</min>
+ <max>70</max>
+ <def>50</def>
+</param11>
+<!--eta_0 of ExponentiatedGradient -->
+<param12>
+ <name>eta0</name>
+ <type>float</type>
+ <min>0.01</min>
+ <max>1.0</max>
+ <def>0.2</def>
+</param12>
+<!--run_linprog_step of ExpGradient -->
+<param13>
+  <name>run_linprog_step</name>
+  <type>bool</type>
+  <min>0</min>
+  <max>1</max>
+  <def>1</def>
+</param13>
+</inputs>

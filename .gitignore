@@ -1,0 +1,16 @@
+*.DS_Store
+*._.DS_Store
+*.pyc
+*.csv
+*.txt
+*.out
+*.png
+bank_age/
+census_gender/
+census_race/
+credit_gender/
+RQ2/
+__pycache__/
+job-submit.sh
+Abstract.docx
+Abstract.pdf
