@@ -1,4 +1,5 @@
 # Parafait-ML: (PARameter FAIrness Testing for ML Libraries)
+
 This repository provides the tool and the evaluation subjects for the paper "Fairness-aware Configuration of Machine Learning Libraries" accepted for the technical track at [ICSE'2022](https://arxiv.org/abs/2202.06196).
 
 The repository includes:
@@ -8,6 +9,14 @@ The repository includes:
 * the evaluation subjects: [subjects](./subjects),
 * the pre-built evaluation all results: [Dataset](./Dataset), and
 * the scripts to rerun all search experiments: [scripts](./script.sh).
+
+## Personal setup
+I am using Google Cloud Platforms C2 (compute optimized, 8 vCPU, 32 GB) Computer Engine Virtual Machine.
+My installation process is as follows:
+1) Follow this tutorial for graphics displays: https://ubuntu.com/blog/launch-ubuntu-desktop-on-google-cloud
+2) Follow this tutorial for Docker container installation: https://docs.docker.com/engine/install/ubuntu/
+3) sudo apt-get install git
+4) Install required packages for python
 
 ## Docker File
 ```
