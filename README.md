@@ -17,7 +17,7 @@ My installation process is as follows:
 2) Follow this tutorial for Docker container installation: https://docs.docker.com/engine/install/ubuntu/
 3) sudo apt-get install git
 4) Install required packages for python
-
+5) Install jupyter notebook with 'sudo apt-get install jupyter' and set up jupyter notebook following this tutorial: https://tudip.com/blog-post/run-jupyter-notebook-on-google-cloud-platform/ (try to set up security as well using a password)
 ## Docker File
 ```
 docker run --rm -it  parfait:1.0.0

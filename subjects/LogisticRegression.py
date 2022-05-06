@@ -4,6 +4,7 @@ import xml_parser
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+import pickle
 
 def logistic_regression(inp, X_train, X_test, y_train, y_test, sensitive_param = None):
     print(inp)
@@ -49,7 +50,11 @@ def logistic_regression(inp, X_train, X_test, y_train, y_test, sensitive_param =
         solver=arr[0], max_iter = arr[7], multi_class=arr[8], l1_ratio = arr[9],
         random_state=arr[11], class_weight = arr[10], verbose = arr[12],
         warm_start = arr[13], n_jobs=arr[14])
-        clf.fit(X_train, y_train)
+        fitted_clf = clf.fit(X_train, y_train)
+
+        with open(f"./trained_models/decisionTree_{arr[0]}_{arr[1]}_{arr[2]}_{arr[3]}_{arr[4]}_{arr[5]}_{arr[6]}_{arr[7]}\
+        _{arr[8]}_{arr[9]}_{arr[10]}_{arr[11]}_{arr[12]}_{arr[13]}_{arr[14]}.pkl", "wb") as file:
+            pickle.dump(fitted_clf, file)
         score = clf.score(X_test, y_test)
         preds = clf.predict(X_test)
 #        print("here1")
