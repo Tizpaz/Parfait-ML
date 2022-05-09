@@ -5,6 +5,7 @@
 *.txt
 *.out
 *.png
+*.pkl
 bank_age/
 census_gender/
 census_race/
