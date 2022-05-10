@@ -1,4 +1,4 @@
-# Parafait-ML: (PARameter FAIrness Testing for ML Libraries)
+# PARFAIT-ML: (PARameter FAIrness Testing for ML Libraries)
 This repository provides the tool and the evaluation subjects for the paper "Fairness-aware Configuration of Machine Learning Libraries" accepted for the technical track at [ICSE'2022](https://conf.researchr.org/track/icse-2022/icse-2022-papers).
 
 The repository includes:
