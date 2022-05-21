@@ -5,6 +5,7 @@ import xml_parser
 from sklearn.datasets import make_regression
 import random
 from sklearn.metrics import accuracy_score
+import pickle
 
 def trans(x):
     if(x >= 0.5):
@@ -12,7 +13,7 @@ def trans(x):
     else:
         return 0
 
-def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None):
+def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None, dataset_name = "", save_model=False):
     arr, features = xml_parser.xml_parser('TreeRegressor_Params.xml',inp)
 
     # mae is much slower than mse
@@ -58,7 +59,11 @@ def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None):
         return False, None, arr, None, None, features
 
     try:
-        random_forest.fit(X_train, y_train)
+        fitted_forest = random_forest.fit(X_train, y_train)
+        if save_model:
+            with open(f"./trained_models/randomForest_{dataset_name}_{sensitive_param}_{arr[0]}_{arr[1]}_{arr[2]}_{arr[3]}_{arr[4]}_{arr[5]}_{arr[6]}_{arr[7]}\
+            _{arr[8]}_{arr[9]}_{arr[10]}_{arr[11]}_{arr[12]}_{arr[13]}_{arr[14]}_{arr[15]}_{arr[16]}_{arr[17]}.pkl", "wb") as file:
+                pickle.dump(fitted_forest, file)
         x_pred = random_forest.predict(X_test)
         x_pred = list(map(trans, x_pred))
         score = accuracy_score(x_pred, y_test)
