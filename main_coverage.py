@@ -71,11 +71,12 @@ class Coverage(object):
 
     def coverage(self):
         """The set of executed lines, as (function_name, line_number) pairs"""
-        path = set()
         path_sign = 0
-        for str, line in self.trace():
-            path_sign ^= line
+        for func_name, line in self.trace():
+            path_sign ^= hash(func_name + str(line))
         return path_sign
+
+
 
 class Runner(object):
     # Test outcomes
