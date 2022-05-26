@@ -69,9 +69,9 @@
   <param7>
     <name>max_iteration</name>
     <type>int</type>
-    <min>9500</min>
-    <max>10500</max>
-    <def>10000</def>
+    <min>950</min>
+    <max>1050</max>
+    <def>1000</def>
   </param7>
    <!--multi_class -->
   <param8>

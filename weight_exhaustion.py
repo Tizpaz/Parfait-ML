@@ -14,7 +14,7 @@ import copy
 from scipy.stats import randint
 import csv
 import argparse
-
+import math
 from sklearn.metrics import r2_score, accuracy_score, precision_score, recall_score
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
@@ -29,15 +29,18 @@ from adf_data.compas import compas_data
 import xml_parser
 import xml_parser_domains
 from Timeout import timeout
+from ast import literal_eval
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dataset", help='The name of dataset: census, credit, bank ')
 parser.add_argument("--algorithm", help='The name of algorithm: logistic regression, SVM, Random Forest')
 parser.add_argument("--sensitive_index", help='The index for sensitive feature')
+parser.add_argument("--inp", help='Hyperparameters')
 parser.add_argument("--output", help='The name of output file', required=False)
 parser.add_argument("--time_out", help='Max. running time', default = 14400, required=False)
 parser.add_argument("--max_iter", help='The maximum number of iterations', default = 100000, required=False)
+
 parser.add_argument("--save_model", help='Enable save models)', default = False, required=False)
 parser.add_argument("--standard_scale", help='Preprocess data with standard scaling on features before using model', default = False, required=False)
 args = parser.parse_args()
@@ -54,6 +57,15 @@ def check_for_fairness(X, y_pred, y_true, a, X_new = None, Y_new = None):
 
     metric_frame = MetricFrame(metrics, y_true, y_pred, sensitive_features=a)
     return metric_frame.by_group["true positive rate"], metric_frame.by_group["false positive rate"]
+
+
+def feature_mask_list(num, size):
+    mask = []
+    while size!=0:
+        mask.append(num%2 ==1)
+        num = math.floor(num/2)
+        size = math.floor(size/2)
+    return mask
 
 
 @timeout(int(args.time_out))
@@ -140,73 +152,28 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
         filename = "./Dataset/" + args.output + ".csv"
 
     with open(filename, 'w') as f:
-        for counter in range(max_iter):
-            inp = []
-            # include default value
-            if counter == 0:
-                for i in range(len(arr_min)):
-                    if(arr_type[i] == 'bool'):
-                        inp.append(int(arr_default[i]))
-                    elif(arr_type[i] == 'int'):
-                        inp.append(int(arr_default[i]))
-                    elif(arr_type[i] == 'float'):
-                        inp.append(float(arr_default[i]))
-            else:
-                rnd = np.random.random()
-                if (rnd < 0.05 and counter > 100) or (rnd < 0.5 and counter < 100):
-                    for i in range(len(arr_min)):
-                        if(arr_type[i] == 'bool'):
-                            inp.append(randint.rvs(0,2))
-                        elif(arr_type[i] == 'int'):
-                            minVal = int(arr_min[i])
-                            maxVal = int(arr_max[i])
-                            inp.append(np.random.randint(minVal,maxVal+1))
-                        elif(arr_type[i] == 'float'):
-                            minVal = float(arr_min[i])
-                            maxVal = float(arr_max[i])
-                            inp.append(np.random.uniform(minVal,maxVal+0.00001))
-                else:
-                    # if rnd < 0.9:
-                    inp = promising_inputs_AOD[-1]
-                    print(inp)
-                    index = np.random.randint(0,len(arr_min)-1)
-                    if(arr_type[index] == 'bool'):
-                        inp[index] = 1 - inp[index]
-                    elif(arr_type[index] == 'int'):
-                        minVal = int(arr_min[index])
-                        maxVal = int(arr_max[index])
-                        rnd = np.random.random()
-                        if rnd < 0.4:
-                            newVal = np.random.randint(minVal,maxVal+1)
-                            trail = 0
-                            while newVal == inp[index] and trail < 3:
-                                newVal = np.random.randint(minVal,maxVal+1)
-                                trail += 1
-                        elif rnd < 0.7:
-                            newVal = inp[index] + 1
-                        else:
-                            newVal = inp[index] - 1
-                        inp[index] = newVal
-                    elif(arr_type[index] == 'float'):
-                        minVal = float(arr_min[index])
-                        maxVal = float(arr_max[index])
-                        rnd = np.random.random()
-                        if rnd < 0.5:
-                            inp[index] = np.random.uniform(minVal,maxVal+0.000001)
-                        elif rnd < 0.75:
-                            newVal = inp[index] + abs(maxVal-minVal)/100
-                        else:
-                            newVal = inp[index] - abs(maxVal-minVal)/100
-            print(inp)
+
+        num_iter = 2**len(X_train[0])
+
+        for counter in range(num_iter):
+            inp = literal_eval(args.inp) # TODO: Put most accurate model here!
+            
+
+            feature_mask = feature_mask_list(counter, num_iter-1)
+            print(f"{feature_mask}")
+            X_train_masked = np.delete(X_train, feature_mask, axis = 1)
+            X_test_masked = np.delete(X_test, feature_mask, axis = 1)
+
+
             if (args.standard_scale=="True"):
                 from sklearn.preprocessing import StandardScaler
                 # To avoid "data leaking"/contaminating the testing data, we transform/fit the X_test data using the X_train data. 
                 ss = StandardScaler()
-                ss.fit(X_train)
+                ss.fit(X_train_masked)
                 
-                res, LR, inp_valid, score, preds, features = input_program(inp, ss.transform(X_train), ss.transform(X_test), y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"))
+                res, LR, inp_valid, score, preds, features = input_program(inp, ss.transform(X_train_masked), ss.transform(X_test_masked), y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"),)
             else:
-                res, LR, inp_valid, score, preds, features = input_program(inp, X_train, X_test, y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"))
+                res, LR, inp_valid, score, preds, features = input_program(inp, X_train_masked, X_test_masked, y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"))
             if not res:
                 failed += 1
                 continue
@@ -218,6 +185,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                 features.append("FPR")
                 features.append("counter")
                 features.append("timer")
+                features.append("mask")
                 features.append("inp")
                 for i in range(len(features)):
                     if i < len(features) - 1:
@@ -230,8 +198,8 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                 f.write("\n")
                 default_acc = score
 
-            if (score < (default_acc - 0.01)): # TODO: Accuracy 1%
-                continue
+            # if (score < (default_acc - 0.01)): # TODO: Accuracy 1%
+            #    continue
 
             if(score > highest_acc):
                 highest_acc = score
@@ -251,6 +219,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
             full_inp.append(diff_2)
             full_inp.append(counter)
             full_inp.append(time.time() - start_time)
+            full_inp.append(f'"{str(feature_mask_list(counter, num_iter-1))}"')
             full_inp.append(f'"{str(inp)}"')
 
             for i in range(len(full_inp)):
@@ -297,8 +266,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
             print("Highest AOD difference is " + str(AOD_diff))
             print("Highest EOD different is " + str(high_diff_1))
             print("score is " + str(score))
-            print("counter: " + str(counter))
-            print("---------------------------------------------------------")
+            print(f"---------------------------------------------------------{counter}/{num_iter}")
 
     print("------------------END-----------------------------------")
     print(promising_inputs_fair1[-1])

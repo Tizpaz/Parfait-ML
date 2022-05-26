@@ -5,7 +5,7 @@ import xml_parser
 import random
 import pickle
 
-def DecisionTree(inp, X_train, X_test, y_train, y_test, sensitive_param = None, dataset_name = "", save_model = False):
+def DecisionTree(inp, X_train, X_test, y_train, y_test, sensitive_param = None, dataset_name = "", save_model = False, feature_mask = None):
     arr, features = xml_parser.xml_parser('Decision_Tree_Classifier_Params.xml',inp)
 
     if(arr[2] == 'None'):
