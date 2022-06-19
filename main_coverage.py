@@ -37,6 +37,10 @@ parser.add_argument("--output", help='The name of output file', required=False)
 parser.add_argument("--sensitive_index", help='The index for sensitive feature')
 parser.add_argument("--time_out", help='Max. running time', default = 14400, required=False)
 parser.add_argument("--max_iter", help='The maximum number of iterations', default = 100000, required=False)
+parser.add_argument("--save_model", help='Enable save models', default = "False", required=False)
+parser.add_argument("--standard_scale", help='Preprocess data with standard scaling on features before using model', default = "False", required=False)
+parser.add_argument("--unaware", help='Mask the sensitive attribute (essentially running "fairness through unawareness"', default = "False", required=False)
+
 args = parser.parse_args()
 
 class Coverage(object):
@@ -128,7 +132,23 @@ class FunctionRunner(Runner):
         self.function = function
 
     def run_function(self, inp, X_train, X_test, y_train, y_test):
-        res = self.function(inp, X_train, X_test, y_train, y_test)
+
+        save_model = (args.save_model.lower()=="true")
+
+        mask = [False]*len(X_train[0])
+        if (args.unaware.lower()=="true"):
+            mask[sensitive_param-1] = True
+        X_train_masked = np.delete(X_train, mask, axis = 1)
+        X_test_masked = np.delete(X_test, mask, axis = 1)
+
+        if (args.standard_scale.lower()=="true"):
+            from sklearn.preprocessing import StandardScaler
+                # To avoid "data leaking"/contaminating the testing data, we transform/fit the X_test data using the X_train data. 
+            ss = StandardScaler()
+            ss.fit(X_train_masked)
+            res = self.function(inp, ss.transform(X_train_masked), ss.transform(X_test_masked), y_train, y_test, sensitive_param, dataset_name=dataset, save_model=save_model)
+        else:
+            res = self.function(inp, X_train_masked, X_test_masked, y_train, y_test, sensitive_param, dataset_name=dataset, save_model=save_model)
         return res
 
     def run(self, inp, X_train, X_test, y_train, y_test):
