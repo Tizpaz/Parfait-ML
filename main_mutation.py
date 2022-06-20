@@ -230,8 +230,8 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                 f.write("\n")
                 default_acc = score
 
-            if (score < (default_acc - 0.01)): # TODO: Accuracy 1%
-                continue
+            # if (score < (default_acc - 0.01)): # TODO: Accuracy 1%
+            #    continue
 
             if(score > highest_acc):
                 highest_acc = score
