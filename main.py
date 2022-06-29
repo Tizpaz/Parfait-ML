@@ -12,8 +12,8 @@ inps = []
 
 for t in test:
     for c in classifiers:
-    df = pd.read_csv("./Dataset" + "/" + f"{c}_{t[0]}_{t[1]}_mutation.csv")
-    inps.append(df[df['score'] == df['score'].min()].iloc[0].inp)
+        df = pd.read_csv("./Dataset" + "/" + f"{c}_{t[0]}_{t[1]}_mutation.csv")
+        inps.append(df[df['score'] == df['score'].min()].iloc[0].inp)
 
 weight_command = ['./weight_exhaustion_testing.sh'] + inps
 
