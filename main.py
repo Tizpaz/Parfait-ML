@@ -1,6 +1,6 @@
 import subprocess
 
-subprocess.call(['./mutation_testing.sh'])
+subprocess.call(['./m_mutation_testing.sh'])
 
 
 import pandas as pd
@@ -15,6 +15,6 @@ for t in test:
         df = pd.read_csv("./Dataset" + "/" + f"{c}_{t[0]}_{t[1]}_mutation.csv")
         inps.append(df[df['score'] == df['score'].min()].iloc[0].inp)
 
-weight_command = ['./weight_exhaustion_testing.sh'] + inps
+weight_command = ['./m_weight_exhaustion_testing.sh'] + inps
 
 subprocess.call(weight_command)
