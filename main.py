@@ -1,6 +1,7 @@
 import subprocess
-
-subprocess.call(['./m_mutation_testing.sh'])
+timeout=360
+save_model = True
+subprocess.call(['./m_mutation_testing.sh', f"{timeout}", f"{save_model}"])
 
 
 import pandas as pd
@@ -15,6 +16,6 @@ for t in test:
         df = pd.read_csv("./Dataset" + "/" + f"{c}_{t[0]}_{t[1]}_mutation.csv")
         inps.append(df[df['score'] == df['score'].min()].iloc[0].inp)
 
-weight_command = ['./m_weight_exhaustion_testing.sh'] + inps
+weight_command = ['./m_weight_exhaustion_testing.py', f"{timeout}", f"{save_model}"]
 
 subprocess.call(weight_command)

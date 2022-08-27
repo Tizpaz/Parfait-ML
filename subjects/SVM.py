@@ -30,8 +30,8 @@ def SVM(inp, X_train, X_test, y_train, y_test, sensitive_param = None, dataset_n
                         class_weight = arr[8], verbose=arr[10], random_state=arr[9], max_iter=arr[11])
         fitted_clf = clf.fit(X_train, y_train)
         if save_model:
-            with open(f"./trained_models/svm_{dataset_name}_{sensitive_param}_{arr[0]}_{arr[1]}_{arr[2]}_{arr[3]}_{arr[4]}_{arr[5]}_{arr[6]}_{arr[7]}\
-            _{arr[8]}_{arr[9]}_{arr[10]}_{arr[11]}.pkl", "wb") as file:
+            with open(f"./trained_models/svm_{dataset_name}_{sensitive_param}_{arr[0]}_{arr[1]}_{arr[2]}_{arr[3]}_{arr[4]}_{arr[5]}_{arr[6]}_{arr[7]}"\
+            f"_{arr[8]}_{arr[9]}_{arr[10]}_{arr[11]}.pkl", "wb") as file:
                 pickle.dump(fitted_clf, file)
         
         score = clf.score(X_test, y_test)
