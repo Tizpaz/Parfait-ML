@@ -204,9 +204,9 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                 ss = StandardScaler()
                 ss.fit(X_train)
                 
-                res, LR, inp_valid, score, preds, features = input_program(inp, ss.transform(X_train), ss.transform(X_test), y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"))
+                res, LR, inp_valid, score, preds, features, write_file = input_program(inp, ss.transform(X_train), ss.transform(X_test), y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"))
             else:
-                res, LR, inp_valid, score, preds, features = input_program(inp, X_train, X_test, y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"))
+                res, LR, inp_valid, score, preds, features, write_file = input_program(inp, X_train, X_test, y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"))
             if not res:
                 failed += 1
                 continue
@@ -218,7 +218,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                 features.append("FPR")
                 features.append("counter")
                 features.append("timer")
-                features.append("inp")
+                features.append("write_file")
                 for i in range(len(features)):
                     if i < len(features) - 1:
                         if features[i] == None:
@@ -251,7 +251,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
             full_inp.append(diff_2)
             full_inp.append(counter)
             full_inp.append(time.time() - start_time)
-            full_inp.append(f'"{str(inp)}"')
+            full_inp.append(f'"{str(write_file)}"')
 
             for i in range(len(full_inp)):
                 if i < len(full_inp) - 1:

@@ -1,4 +1,4 @@
-a,b,c,d,e,f,g,race,sex,j,k,l,m,label
+age,workclass,fnlwgt,education-num,martial-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country,label
 3,5,3,0,2,8,3,0,1,2,0,40,0,0
 5,1,4,0,0,4,2,0,1,0,0,13,0,0
 3,0,10,3,1,6,3,0,1,0,0,40,0,0

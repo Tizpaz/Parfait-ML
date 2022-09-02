@@ -15,7 +15,7 @@ def trans(x):
 
 def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None, dataset_name = "", save_model=False):
     arr, features = xml_parser.xml_parser('TreeRegressor_Params.xml',inp)
-
+    write_file = None
     # mae is much slower than mse
     if(arr[0] == 'mae'):
         rand = np.random.random()
@@ -61,8 +61,9 @@ def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None, d
     try:
         fitted_forest = random_forest.fit(X_train, y_train)
         if save_model:
-            with open(f"./trained_models/randomForest_{dataset_name}_{sensitive_param}_{arr[0]}_{arr[1]}_{arr[2]}_{arr[3]}_{arr[4]}_{arr[5]}_{arr[6]}_{arr[7]}"\
-            "_{arr[8]}_{arr[9]}_{arr[10]}_{arr[11]}_{arr[12]}_{arr[13]}_{arr[14]}_{arr[15]}_{arr[16]}_{arr[17]}.pkl", "wb") as file:
+            write_file = f"./trained_models/randomForest_{dataset_name}_{sensitive_param}_{arr[0]}_{arr[1]}_{arr[2]}_{arr[3]}_{arr[4]}_{arr[5]}_{arr[6]}_{arr[7]}"\
+            f"_{arr[8]}_{arr[9]}_{arr[10]}_{arr[11]}_{arr[12]}_{arr[13]}_{arr[14]}_{arr[15]}_{arr[16]}_{arr[17]}.pkl"
+            with open(write_file, "wb") as file:
                 pickle.dump(fitted_forest, file)
         x_pred = random_forest.predict(X_test)
         x_pred = list(map(trans, x_pred))
@@ -70,8 +71,8 @@ def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None, d
         preds = random_forest.predict(X_test)
     except ValueError as VE:
         print("error3: " + str(VE))
-        return False, None, arr, None, None, features
+        return False, None, arr, None, None, features, write_file
 
     print(arr)
     preds = list(map(trans, preds))
-    return True, random_forest, arr, score, preds, features
+    return True, random_forest, arr, score, preds, features, write_file

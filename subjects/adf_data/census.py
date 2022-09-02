@@ -14,7 +14,8 @@ def census_data():
     Y = []
     i = 0
 
-    with open("subjects/datasets/census", "r") as ins:
+    script_dir = os.path.dirname(__file__)
+    with open(os.path.join(script_dir,"../datasets/census"), "r") as ins:
         for line in ins:
             line = line.strip()
             line1 = line.split(',')

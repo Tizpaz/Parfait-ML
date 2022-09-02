@@ -7,7 +7,7 @@ import pickle
 
 def DecisionTree(inp, X_train, X_test, y_train, y_test, sensitive_param = None, dataset_name = "", save_model = False, feature_mask = None):
     arr, features = xml_parser.xml_parser('Decision_Tree_Classifier_Params.xml',inp)
-
+    write_file = None
     if(arr[2] == 'None'):
         arr[2] = None
     else:
@@ -48,8 +48,9 @@ def DecisionTree(inp, X_train, X_test, y_train, y_test, sensitive_param = None, 
                 ccp_alpha = arr[12])
         fitted_clf = clf.fit(X_train, y_train)
         if save_model:
-            with open(f"./trained_models/decisionTree_{dataset_name}_{sensitive_param}_{arr[0]}_{arr[1]}_{arr[2]}_{arr[3]}_{arr[4]}_{arr[5]}_{arr[6]}_{arr[7]}"\
-            f"_{arr[8]}_{arr[9]}_{arr[11]}_{arr[12]}.pkl", "wb") as file:
+            write_file = f"./trained_models/decisionTree_{dataset_name}_{sensitive_param}_{arr[0]}_{arr[1]}_{arr[2]}_{arr[3]}_{arr[4]}_{arr[5]}_{arr[6]}_{arr[7]}"\
+            f"_{arr[8]}_{arr[9]}_{arr[11]}_{arr[12]}.pkl"
+            with open(write_file, "wb") as file:
                 pickle.dump(fitted_clf, file)
 
         score = clf.score(X_test, y_test)
@@ -60,7 +61,7 @@ def DecisionTree(inp, X_train, X_test, y_train, y_test, sensitive_param = None, 
         print("here you go------------------------------------")
         print(arr)
         print(ve)
-        return False, None, None, None, None, None
+        return False, None, None, None, None, None, write_file
 
     print(arr)
-    return True, clf, arr, score, preds, features
+    return True, clf, arr, score, preds, features, write_file

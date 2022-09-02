@@ -1,5 +1,6 @@
 import numpy as np
 import sys
+import os
 sys.path.append("../")
 
 def compas_data():
@@ -10,7 +11,8 @@ def compas_data():
     X = []
     Y = []
     i = 0
-    with open("subjects/datasets/compas", "r") as ins:
+    script_dir = os.path.dirname(__file__)
+    with open(os.path.join(script_dir,"../datasets/compas"), "r") as ins:
         for line in ins:
             line = line.strip()
             line1 = line.split(',')

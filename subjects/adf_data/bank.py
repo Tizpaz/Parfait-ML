@@ -1,6 +1,7 @@
 # adapted from ADF https://github.com/pxzhang94/adf
 import numpy as np
 import sys
+import os
 sys.path.append("../")
 
 def bank_data():
@@ -11,7 +12,8 @@ def bank_data():
     X = []
     Y = []
     i = 0
-    with open("subjects/datasets/bank", "r") as ins:
+    script_dir = os.path.dirname(__file__)
+    with open(os.path.join(script_dir,"../datasets/bank"), "r") as ins:
         for line in ins:
             line = line.strip()
             line1 = line.split(',')
