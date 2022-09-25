@@ -7,7 +7,7 @@ import plotly.express as plt
 import plotly.tools as tools
 import math
 import matplotlib.pyplot as mplt
-
+from configs import columns, get_groups
 
 
 
@@ -94,7 +94,7 @@ def create_model(model, dataset, algo):
 
             for i in range(len(checked)):
                 if checked[i]:
-                    dot_data = tree.export_graphviz(trained_model.estimators_[i],max_depth=max_depth, feature_names=feature_names, proportion = True, class_names=True, out_file=None, rounded=True)
+                    dot_data = tree.export_graphviz(trained_model.estimators_[i],max_depth=max_depth, feature_names=columns[dataset[0]][:-1], proportion = True, class_names=True, out_file=None, rounded=True)
                     st.graphviz_chart(dot_data)
         elif model == "SV":
             model_df = {"feature": range(len(trained_model.coef_[0])), "weight":trained_model.coef_[0], "sensitive_feature": [False]*len(trained_model.coef_[0])}
@@ -114,7 +114,7 @@ def create_model(model, dataset, algo):
                 else:
                     feature_names.append(dataset[1])
             max_depth = st.slider('Max depth', 0, 10, 2)
-            dot_data = tree.export_graphviz(trained_model,max_depth=max_depth, feature_names=feature_names, proportion = True, class_names=True, out_file=None, rounded=True)
+            dot_data = tree.export_graphviz(trained_model,max_depth=max_depth, feature_names=columns[dataset[0]][:-1], proportion = True, class_names=True, out_file=None, rounded=True)
             st.graphviz_chart(dot_data)
             
 

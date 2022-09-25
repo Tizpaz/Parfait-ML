@@ -4,6 +4,7 @@ import streamlit as st
 import numpy as np
 import plotly.express as plt
 import plotly.tools as tools
+import plotly.graph_objects as go
 import math
 import matplotlib.pyplot as mplt
 
@@ -13,14 +14,21 @@ import sys
 sys.path.append("../")
 
 
+
+
+
 def main():
     from subjects.adf_data.census import census_data
     from subjects.adf_data.credit import credit_data
     from subjects.adf_data.bank import bank_data
     from subjects.adf_data.compas import compas_data
     import pandas as pd
+    from configs import columns, get_groups
     vis_technique = ["Correlation", "PCA", "LDA"]
-    datasets = [("census", "gender",9), ("census", "race",8), ("credit", "gender",9), ("bank","age",1), ("compas","gender",1), ("compas","race",3)]
+    datasets = [("census", "sex",9), ("census", "race",8), ("credit", "sex",9), ("bank","age",1), ("compas","sex",1), ("compas","race",3)]
+
+
+
 
     picked_vis_technique = st.radio("Visualization technique:", vis_technique, horizontal = True)
     picked_dataset = st.radio("Dataset:", datasets, horizontal = True)
@@ -32,14 +40,44 @@ def main():
         from sklearn.preprocessing import StandardScaler
         data = {"census":census_data, "credit":credit_data, "bank":bank_data, "compas": compas_data}
         X, Y, input_shape, nb_classes = data[picked_dataset[0]]()
-        X_transformed = StandardScaler().fit_transform(X) # This turns the "covariance" into correlation
         Y = np.argmax(Y, axis=1)
+        # For this one I actually want to visualize the labels as well 
+        all_data = pd.concat([pd.DataFrame(X),pd.DataFrame(Y)], axis=1) 
+        X_transformed = StandardScaler().fit_transform(all_data) # This turns the "covariance" into correlation
+        
         cov = EmpiricalCovariance().fit(X_transformed)
+        
         # bar_data = {"Column number": nb_classes, "Correlation": cov.covariance_[sensitive_param-1]}
-        sensitive_feature = [False]*len(cov.covariance_[sensitive_param-1])
-        sensitive_feature[sensitive_param-1] = True
-        bar_data = {"Column number": range(len(cov.covariance_[sensitive_param-1])), "Correlation": cov.covariance_[sensitive_param-1], "Sensitive feature": sensitive_feature}
+        sensitive_feature = ["blue"]*len(cov.covariance_[sensitive_param-1])
+        sensitive_feature[sensitive_param-1] = "red"
+        sensitive_feature[len(sensitive_feature)-1] = "green"
+        X_transformed = pd.DataFrame(X_transformed)
+        X = pd.DataFrame(X)
+        X = pd.concat([X, pd.DataFrame(Y)], axis=1)
+        X.columns = columns[picked_dataset[0]]
+        X_transformed.columns = columns[picked_dataset[0]]
+        bar_data = {"Column number": columns[picked_dataset[0]], "Correlation": cov.covariance_[sensitive_param-1]}
+
         bar_data = pd.DataFrame(bar_data)
-        fig = plt.bar(bar_data, x="Column number", y="Correlation", color="Sensitive feature",category_orders={"Sensitive feature": [False, True]}, color_discrete_sequence=['blue', 'red'], title=f"Correlation of each column with {sensitive_name}")
+        fig = plt.bar(bar_data, x="Column number", y="Correlation", title=f"Correlation of each column with {sensitive_name}")
         bar_graph = plotly_events(fig)
+        if bar_graph != []:
+            n_bins = st.slider("Number of desired bins", 0, 100, 15)
+            group_0, group_1 = get_groups(picked_dataset[0], sensitive_name)
+            fig2 = plt.histogram(X, x=bar_graph[0]["x"], color=sensitive_name, histfunc="count")
+            fig2 = go.Figure()
+            fig2.add_trace(go.Histogram(x=X[bar_graph[0]["x"]][(X[sensitive_name]==group_0)], histnorm="", histfunc="count", name='Sensitive attribute group 0', nbinsx=n_bins))
+            fig2.add_trace(go.Histogram(x=X[bar_graph[0]["x"]][(X[sensitive_name]==group_1)], histnorm="", histfunc="count", name='Sensitive attribute group 1', nbinsx=n_bins))
+            fig2.update_layout(
+                title_text=f"Histogram of {sensitive_name} v.s. {bar_graph[0]['x']}", # title of plot
+                xaxis_title_text=f"{bar_graph[0]['x']}", # xaxis label
+                yaxis_title_text='Count', # yaxis label
+                bargap=0.2, # gap between bars of adjacent location coordinates
+                bargroupgap=0.1 # gap between bars of the same location coordinates
+            )
+            hist_graph = plotly_events(fig2)
+
+        # fig2 = plt.bar()
+    
+    
 
