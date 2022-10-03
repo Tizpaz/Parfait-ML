@@ -23,8 +23,8 @@ def main():
     from subjects.adf_data.bank import bank_data
     from subjects.adf_data.compas import compas_data
     import pandas as pd
-    from configs import columns, get_groups
-    vis_technique = ["Correlation", "PCA", "LDA"]
+    from configs import columns, get_groups, labeled_df, int_to_cat_labels_map
+    vis_technique = ["Correlation"]
     datasets = [("census", "sex",9), ("census", "race",8), ("credit", "sex",9), ("bank","age",1), ("compas","sex",1), ("compas","race",3)]
 
 
@@ -56,18 +56,21 @@ def main():
         X = pd.concat([X, pd.DataFrame(Y)], axis=1)
         X.columns = columns[picked_dataset[0]]
         X_transformed.columns = columns[picked_dataset[0]]
-        bar_data = {"Column number": columns[picked_dataset[0]], "Correlation": cov.covariance_[sensitive_param-1]}
-
+        bar_data = {"Column number": columns[picked_dataset[0]], "Correlation": cov.covariance_[sensitive_param-1], "sensitive_feature": [False]*len(columns[picked_dataset[0]])}
+        bar_data["sensitive_feature"][picked_dataset[2]-1] = True
         bar_data = pd.DataFrame(bar_data)
-        fig = plt.bar(bar_data, x="Column number", y="Correlation", title=f"Correlation of each column with {sensitive_name}")
+        st.write("Note: Many of the data are categorical, making correlation a bad metric. Click on the bar to see more detailed labelled bar/histogram graphs.")
+        fig = plt.bar(bar_data, x="Column number", y="Correlation", color="sensitive_feature", category_orders={"Column number": columns[picked_dataset[0]]},color_discrete_map={False:'blue', True:'red'}, title=f"Correlation of each column with {sensitive_name}")
         bar_graph = plotly_events(fig)
         if bar_graph != []:
-            n_bins = st.slider("Number of desired bins", 0, 100, 15)
-            group_0, group_1 = get_groups(picked_dataset[0], sensitive_name)
-            fig2 = plt.histogram(X, x=bar_graph[0]["x"], color=sensitive_name, histfunc="count")
+            # n_bins = st.slider("Number of desired bins", 0, 100, 15)
+            X_labeled = labeled_df(X, picked_dataset[0])
+            cat_labels = int_to_cat_labels_map(picked_dataset[0])
+            group_0, group_1 = get_groups(picked_dataset[0], sensitive_name, get_name=True)
+            print({bar_graph[0]["x"]: list(cat_labels[bar_graph[0]["x"]].values())})
             fig2 = go.Figure()
-            fig2.add_trace(go.Histogram(x=X[bar_graph[0]["x"]][(X[sensitive_name]==group_0)], histnorm="", histfunc="count", name='Sensitive attribute group 0', nbinsx=n_bins))
-            fig2.add_trace(go.Histogram(x=X[bar_graph[0]["x"]][(X[sensitive_name]==group_1)], histnorm="", histfunc="count", name='Sensitive attribute group 1', nbinsx=n_bins))
+            fig2.add_trace(go.Histogram(x=X_labeled[bar_graph[0]["x"]][(X_labeled[sensitive_name]==group_0)],histnorm="", histfunc="count", name=f'{group_0}'))
+            fig2.add_trace(go.Histogram(x=X_labeled[bar_graph[0]["x"]][(X_labeled[sensitive_name]==group_1)],histnorm="", histfunc="count", name=f'{group_1}'))
             fig2.update_layout(
                 title_text=f"Histogram of {sensitive_name} v.s. {bar_graph[0]['x']}", # title of plot
                 xaxis_title_text=f"{bar_graph[0]['x']}", # xaxis label
@@ -75,6 +78,7 @@ def main():
                 bargap=0.2, # gap between bars of adjacent location coordinates
                 bargroupgap=0.1 # gap between bars of the same location coordinates
             )
+            fig2.update_xaxes(categoryorder='array', categoryarray=list(cat_labels[bar_graph[0]["x"]].values()))
             hist_graph = plotly_events(fig2)
 
         # fig2 = plt.bar()

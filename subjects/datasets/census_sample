@@ -1,4 +1,4 @@
-age,workclass,fnlwgt,education-num,martial-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country,label
+age,workclass,fnlwgt,education,martial-status,occupation,relationship,race,sex,capital-gain,capital-loss,hours-per-week,native-country,label
 5,0,11,2,0,6,2,4,1,0,0,40,0,0
 2,0,16,0,0,5,0,4,0,0,0,40,12,0
 4,0,8,7,5,2,3,4,0,0,0,16,18,0

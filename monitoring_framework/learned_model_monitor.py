@@ -1,3 +1,4 @@
+from telnetlib import X3PAD
 from unicodedata import category
 from streamlit_plotly_events import plotly_events
 import streamlit as st
@@ -7,7 +8,7 @@ import plotly.express as plt
 import plotly.tools as tools
 import math
 import matplotlib.pyplot as mplt
-from configs import columns, get_groups
+from configs import columns, get_groups, labeled_df, columns, categorical_features, categorical_features_names
 
 
 
@@ -64,9 +65,9 @@ def create_model(model, dataset, algo):
         
         if model == "LR": # For logistic regression, a bar graph is created to show the weights of the model
             st.write(len(trained_model.coef_))
-            model_df = {"feature": range(len(trained_model.coef_[0])), "weight":trained_model.coef_[0], "sensitive_feature": [False]*len(trained_model.coef_[0])}
+            model_df = {"feature": columns[dataset[0]][:-1], "weight":trained_model.coef_[0], "sensitive_feature": [False]*len(trained_model.coef_[0])}
             model_df["sensitive_feature"][dataset[2]-1] = True
-            fig_2 = plt.bar(model_df, x="feature", y="weight", color="sensitive_feature", category_orders={'sensitive_feature': [False, True]}, color_discrete_sequence=['blue', 'red'],
+            fig_2 = plt.bar(model_df, x="feature", y="weight", color="sensitive_feature", category_orders={"feature": columns[dataset[0]][:-1]},color_discrete_map={False:'blue', True:'red'},
                 title="The Logistic Regression Model's coefficient/weights for each feature")
             plotly_events(fig_2)
         elif model == "RF": # For random forest, trees are graphed to show the logic of the model
@@ -116,7 +117,56 @@ def create_model(model, dataset, algo):
             max_depth = st.slider('Max depth', 0, 10, 2)
             dot_data = tree.export_graphviz(trained_model,max_depth=max_depth, feature_names=columns[dataset[0]][:-1], proportion = True, class_names=True, out_file=None, rounded=True)
             st.graphviz_chart(dot_data)
-            
+        
+
+        # We now seek to explain a datapoint and how it is predicted
+        st.write("Classifying and explaining a datapoint")
+        from subjects.adf_data.census import census_data
+        from subjects.adf_data.credit import credit_data
+        from subjects.adf_data.bank import bank_data
+        from subjects.adf_data.compas import compas_data
+        data = {"census":census_data, "credit":credit_data, "bank":bank_data, "compas": compas_data}
+        X, Y, input_shape, nb_classes = data[dataset[0]]()
+        Y = np.argmax(Y, axis=1)
+        X = X.astype(np.int64)
+        Y = Y.astype(np.int64)
+        labeled_data = labeled_df(pd.concat([pd.DataFrame(X),pd.DataFrame(Y)], axis=1), dataset[0])
+        labeled_data.columns = columns[dataset[0]]
+        explain_sample = st.slider("Pick a data point in the dataset for classification and explaination: ", min_value=0, max_value=int(len(labeled_data.index)-1), step=1)
+        sample_point = X[explain_sample:explain_sample+1]
+        
+        st.write(labeled_data[explain_sample:explain_sample+1])
+
+        import sklearn
+        import lime
+        import lime.lime_tabular
+        from io import BytesIO
+        from PIL import Image
+        train, test, labeled_train, labeled_test = sklearn.model_selection.train_test_split(X, Y, train_size=0.80)
+        categorical_names = {}
+        # Processing features so that it fits for LIME
+        labeled_X_np = labeled_data.to_numpy()[:,:-1] # to array, minus the label
+        for feature in categorical_features[dataset[0]][:-1]:
+            le = sklearn.preprocessing.LabelEncoder()
+            le.fit(labeled_X_np[:, feature])
+            labeled_X_np[:, feature] = le.transform(labeled_X_np[:, feature])
+            categorical_names[feature] = le.classes_
+        labeled_Y_np = labeled_data.to_numpy()[:,-1:] # to array, minus the label
+        class_names = {}
+        for feature in [0]:
+            le = sklearn.preprocessing.LabelEncoder()
+            le.fit(labeled_Y_np[:, feature])
+            labeled_Y_np[:, feature] = le.transform(labeled_Y_np[:, feature])
+            class_names[feature] = le.classes_
+        explainer = lime.lime_tabular.LimeTabularExplainer(train ,feature_names = columns[dataset[0]][:-1],class_names=list(class_names.values())[0],
+                                                   categorical_features=categorical_features[dataset[0]][:-1], 
+                                                   categorical_names=categorical_names, kernel_width=3)
+        predict_fn = lambda x: trained_model.predict_proba(x)
+        exp = explainer.explain_instance(X[explain_sample], predict_fn)
+        explaination_fig = exp.as_pyplot_figure()
+        st.write("Prediction correct" if trained_model.predict(sample_point) == Y[explain_sample:explain_sample+1] else "Prediction Incorrect")
+        st.pyplot(explaination_fig)
+        
 
 def main():
     models = ["LR","RF","SV","DT"]
