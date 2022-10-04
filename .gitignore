@@ -12,4 +12,4 @@ __pycache__/
 job-submit.sh
 Abstract.docx
 Abstract.pdf
-trained_models/*
+trained_models
