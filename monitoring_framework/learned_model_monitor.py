@@ -59,7 +59,7 @@ def create_model(model, dataset, algo):
         selected_point = selected_points[0]['pointIndex']
         write_file = df.iloc[selected_point]['write_file']
         st.write(f"Hyperparameters: {write_file}")
-        file = open(f".{write_file}", "rb")
+        file = open(os.path.dirname(__file__)+"/"+f".{write_file}", "rb")
         trained_model = pickle.load(file, encoding="latin-1")
         
         if model == "LR": # For logistic regression, a bar graph is created to show the weights of the model
