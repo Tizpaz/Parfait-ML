@@ -1,7 +1,8 @@
 import subprocess
-timeout=360
+timeout=30
+max_iter=25
 save_model = True
-subprocess.call(['./m_mutation_testing.sh', f"{timeout}", f"{save_model}"])
+subprocess.call(['./m_mutation_testing.sh', f"{timeout}", f"{save_model}", f"{max_iter}"])
 
 
 import pandas as pd

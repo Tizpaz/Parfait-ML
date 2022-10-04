@@ -48,6 +48,7 @@ def create_model(model, dataset, algo):
     mask = is_pareto_efficient(df_masking[["score","AOD"]].to_numpy(), True)
     df = df.assign(pareto_optimal=mask)
     zoom = st.slider("Zoom: ", min_value=0.0, max_value=1.0, step=.0001)
+    st.write("Each dot below represents a model. Click on a dot to gain further insight on model parameters/decisions and classification explainability!")
     fig = plt.scatter(df, x = "score", y = "AOD", color='pareto_optimal', category_orders={'pareto_optimal': [False, True]}, color_discrete_sequence=['blue', 'red'],
             title="Pareto Optimal Frontier", range_x=[zoom*.5+.5,1], range_y=[-0.01,.25-zoom*.25])
 
