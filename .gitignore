@@ -1,10 +1,8 @@
 *.DS_Store
 *._.DS_Store
 *.pyc
-*.csv
 *.out
 *.png
-*.pkl
 bank_age/
 census_gender/
 census_race/

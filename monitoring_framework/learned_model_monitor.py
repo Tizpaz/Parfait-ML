@@ -5,6 +5,7 @@ import pandas as pd
 import plotly.express as plt
 import plotly.tools as tools
 import math
+import os
 import matplotlib.pyplot as mplt
 from configs import columns, get_groups, labeled_df, columns, categorical_features, categorical_features_names
 
@@ -41,7 +42,7 @@ def is_pareto_efficient(costs, return_mask = True):
 def create_model(model, dataset, algo):
 
     # Plot the pareto optimal frontier
-    df = pd.read_csv("../Dataset" + "/" + f"{model}_{dataset[0]}_{dataset[1]}_{algo}.csv")
+    df = pd.read_csv(os.path.abspath(__file__)+"../Dataset" + "/" + f"{model}_{dataset[0]}_{dataset[1]}_{algo}.csv")
     df_masking = df.copy()
     df_masking["score"] = -df_masking["score"] # we want to find maximium for score
     mask = is_pareto_efficient(df_masking[["score","AOD"]].to_numpy(), True)
