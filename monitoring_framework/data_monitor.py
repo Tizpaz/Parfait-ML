@@ -66,7 +66,6 @@ def main():
             X_labeled = labeled_df(X, picked_dataset[0])
             cat_labels = int_to_cat_labels_map(picked_dataset[0])
             group_0, group_1 = get_groups(picked_dataset[0], sensitive_name, get_name=True)
-            print({bar_graph[0]["x"]: list(cat_labels[bar_graph[0]["x"]].values())})
             fig2 = go.Figure()
             fig2.add_trace(go.Histogram(x=X_labeled[bar_graph[0]["x"]][(X_labeled[sensitive_name]==group_0)],histnorm="", histfunc="count", name=f'{group_0}'))
             fig2.add_trace(go.Histogram(x=X_labeled[bar_graph[0]["x"]][(X_labeled[sensitive_name]==group_1)],histnorm="", histfunc="count", name=f'{group_1}'))
@@ -77,7 +76,10 @@ def main():
                 bargap=0.2, # gap between bars of adjacent location coordinates
                 bargroupgap=0.1 # gap between bars of the same location coordinates
             )
-            fig2.update_xaxes(categoryorder='array', categoryarray=list(cat_labels[bar_graph[0]["x"]].values()))
+            if bar_graph[0]["x"] in cat_labels.keys():
+                fig2.update_xaxes(categoryorder='array', categoryarray=list(cat_labels[bar_graph[0]["x"]].values()))
+            else:
+                fig2.update_xaxes(categoryorder='category ascending')
             hist_graph = plotly_events(fig2)
 
         # fig2 = plt.bar()
