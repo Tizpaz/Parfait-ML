@@ -4,3 +4,4 @@ plotly
 sklearn
 streamlit_plotly_events
 matplotlib
+lime
