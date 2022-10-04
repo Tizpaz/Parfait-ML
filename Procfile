@@ -1,0 +1,1 @@
+web: sh setup.sh && streamlit run monitoring_framework/main_display.py

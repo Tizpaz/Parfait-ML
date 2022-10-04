@@ -1,4 +1,3 @@
-from telnetlib import X3PAD
 from unicodedata import category
 from streamlit_plotly_events import plotly_events
 import streamlit as st
