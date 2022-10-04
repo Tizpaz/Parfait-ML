@@ -2,7 +2,6 @@
 *._.DS_Store
 *.pyc
 *.csv
-*.txt
 *.out
 *.png
 *.pkl
