@@ -7,7 +7,7 @@ import plotly.tools as tools
 import math
 import os
 import matplotlib.pyplot as mplt
-from configs import columns, get_groups, labeled_df, columns, categorical_features, categorical_features_names
+from configs import columns, get_groups, labeled_df, categorical_features, categorical_features_names
 
 
 
@@ -150,19 +150,20 @@ def create_model(model, dataset, algo):
             le = sklearn.preprocessing.LabelEncoder()
             le.fit(labeled_X_np[:, feature])
             labeled_X_np[:, feature] = le.transform(labeled_X_np[:, feature])
-            categorical_names[feature] = le.classes_
+            categorical_names[feature] = list(le.classes_)
+        
+        
         labeled_Y_np = labeled_data.to_numpy()[:,-1:] # to array, minus the label
-        class_names = {}
-        for feature in [0]:
-            le = sklearn.preprocessing.LabelEncoder()
-            le.fit(labeled_Y_np[:, feature])
-            labeled_Y_np[:, feature] = le.transform(labeled_Y_np[:, feature])
-            class_names[feature] = le.classes_
-        explainer = lime.lime_tabular.LimeTabularExplainer(train ,feature_names = columns[dataset[0]][:-1],class_names=list(class_names.values())[0],
+        le = sklearn.preprocessing.LabelEncoder()
+        le.fit(labeled_Y_np)
+        labeled_Y_np = le.transform(labeled_Y_np)
+        class_names = le.classes_
+
+        explainer = lime.lime_tabular.LimeTabularExplainer(train ,feature_names = columns[dataset[0]][:-1],class_names=list(class_names),
                                                    categorical_features=categorical_features[dataset[0]][:-1], 
                                                    categorical_names=categorical_names, kernel_width=3)
         predict_fn = lambda x: trained_model.predict_proba(x)
-        exp = explainer.explain_instance(X[explain_sample], predict_fn)
+        exp = explainer.explain_instance(labeled_X_np[explain_sample], predict_fn)
         explaination_fig = exp.as_pyplot_figure()
         st.write("Prediction correct" if trained_model.predict(sample_point) == Y[explain_sample:explain_sample+1] else "Prediction Incorrect")
         st.pyplot(explaination_fig)
