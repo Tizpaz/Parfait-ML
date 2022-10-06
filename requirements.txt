@@ -5,3 +5,4 @@ sklearn
 streamlit_plotly_events
 matplotlib
 lime
+graphviz
