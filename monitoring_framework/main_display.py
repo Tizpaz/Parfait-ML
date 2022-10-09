@@ -2,7 +2,7 @@ import data_monitor
 import learned_model_monitor
 import home
 import streamlit as st
-
+st.write("NOTE: CLICKING ON SOME OF THE PLOTLY GRAPHS MAY PRODUCE MORE DETAILS.")
 version = st.radio("Visualization tool:", ["Home", "Data Visualization", "Learned Model Visualization"], horizontal = True)
 
 if version == "Home":
