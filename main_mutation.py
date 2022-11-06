@@ -83,7 +83,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
         import SVM
         input_program = SVM.SVM
         input_program_tree = 'SVM_Params.xml'
-        num_args = 12
+        num_args = 15
     elif(program_name == "LogisticRegressionMitigation"):
         import LogisticRegressionMitigation
         input_program = LogisticRegressionMitigation.logistic_regression_mitigation

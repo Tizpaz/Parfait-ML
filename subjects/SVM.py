@@ -13,26 +13,22 @@ def SVM(inp, X_train, X_test, y_train, y_test, sensitive_param = None, dataset_n
     write_file = None
     try:
         # domain-specific constraints
-        if(arr[8] == 'none'):
-            arr[8] = None
-        # The combination of penalty='l1' and loss='hinge' is not supported, Parameters: penalty='l1', loss='hinge', dual=False
-        if(arr[0] == 'l1' and arr[1] == 'hinge'):
-            arr[2] = True
-            arr[0] = 'l2'
-        if(arr[0] == 'l2' and arr[1] == 'hinge'):
-            arr[2] = True
-        if(arr[0] == 'l1' and arr[1] == 'squared_hinge'):
-            arr[2] = False
-        arr[5] = 'ovr'
-        arr[9] = 2019
+        print(arr)
+        arr[1] = 'linear'
+        if(arr[9] == 'none'):
+            arr[9] = None
+        arr[6] = True
+        arr[14] = 2019
         arr[10] = 0
-        clf = LinearSVC(penalty = arr[0], loss = arr[1], dual = arr[2], tol = arr[3], C = arr[4],
-                        multi_class = arr[5], fit_intercept = arr[6], intercept_scaling = arr[7],
-                        class_weight = arr[8], verbose=arr[10], random_state=arr[9], max_iter=arr[11])
+        if arr[12] != "ovr":
+            arr[13] = False
+        clf = SVC(C=arr[0], kernel=arr[1], degree=arr[2], gamma=arr[3], coef0=arr[4], shrinking=arr[5], probability=arr[6], tol=arr[7], 
+            cache_size=arr[8], class_weight=arr[9], verbose=arr[10], max_iter=arr[11], decision_function_shape=arr[12],
+            break_ties=arr[13], random_state=arr[14])
         fitted_clf = clf.fit(X_train, y_train)
         if save_model:
             write_file = f"./trained_models/svm_{dataset_name}_{sensitive_param}_{arr[0]}_{arr[1]}_{arr[2]}_{arr[3]}_{arr[4]}_{arr[5]}_{arr[6]}_{arr[7]}"\
-            f"_{arr[8]}_{arr[9]}_{arr[10]}_{arr[11]}.pkl"
+            f"_{arr[8]}_{arr[9]}_{arr[10]}_{arr[11]}_{arr[11]}_{arr[12]}_{arr[13]}_{arr[14]}.pkl"
             with open(write_file, "wb") as file:
                 pickle.dump(fitted_clf, file)
         

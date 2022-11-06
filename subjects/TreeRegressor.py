@@ -1,4 +1,4 @@
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 import time
 import xml_parser
@@ -16,11 +16,6 @@ def trans(x):
 def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None, dataset_name = "", save_model=False):
     arr, features = xml_parser.xml_parser('TreeRegressor_Params.xml',inp)
     write_file = None
-    # mae is much slower than mse
-    if(arr[0] == 'mae'):
-        rand = np.random.random()
-        if(rand < 0.98):
-            arr[0] = 'mse'
 
     # value for max depth
     if(arr[1] == 'None'):
@@ -47,13 +42,13 @@ def TreeRegress(inp, X_train, X_test, y_train, y_test, sensitive_param = None, d
     #     arr[13] = random.randint(int(X_train.shape[0]/4), int(3*X_train.shape[0]/4))
 
     try:
-        random_forest = RandomForestRegressor(n_estimators=arr[11], criterion=arr[0],
+        random_forest = RandomForestClassifier(n_estimators=arr[11], criterion=arr[0],
             max_depth=arr[1], min_samples_split=arr[2], min_samples_leaf=arr[3],
             min_weight_fraction_leaf=arr[4], max_features=arr[5],
             max_leaf_nodes=arr[6], min_impurity_decrease=arr[7],
             bootstrap=arr[8],oob_score=arr[9], warm_start=arr[10], ccp_alpha = arr[12],
-            max_samples = arr[13], random_state = arr[14], verbose = arr[15], n_jobs = arr[16],
-            min_impurity_split = arr[17])
+            max_samples = arr[13], random_state = arr[14], verbose = arr[15], n_jobs = arr[16])
+            # min_impurity_split = arr[17]) I switched from RandomForestRegressor to RandomFOrestClassifier, which has "predict_proba". Gonna just remove this "sneakily for now" ;)
     except ValueError as VE:
         print("error2: " + str(VE))
         return False, None, arr, None, None, features

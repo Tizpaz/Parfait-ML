@@ -1,6 +1,6 @@
 import subprocess
-timeout=30
-max_iter=25
+timeout=90
+max_iter=50
 save_model = True
 subprocess.call(['./m_mutation_testing.sh', f"{timeout}", f"{save_model}", f"{max_iter}"])
 

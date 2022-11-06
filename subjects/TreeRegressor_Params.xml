@@ -5,10 +5,11 @@
     <name>criterion</name>
     <type>int</type>
     <min>0</min>
-    <max>1</max>
+    <max>2</max>
     <def>0</def>
-    <valtrans>mse</valtrans>
-    <valtrans>mae</valtrans>
+    <valtrans>gini</valtrans>
+    <valtrans>entropy</valtrans>
+    <valtrans>log_loss</valtrans>
   </param0>
   <!--max_depth -->
   <param1>
