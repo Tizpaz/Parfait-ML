@@ -79,6 +79,12 @@ def int_to_cat_labels_map(dataset):
         values = names.split(',')
         output[columns[dataset][categorical_features[dataset][j]]] = dict([(x.split('=')[1], x.split('=')[0]) for x in values])
     return output
+def cat_to_int_map(dataset):
+    output = {}
+    for j, names in enumerate(categorical_features_names[dataset]):
+        values = names.split(',')
+        output[columns[dataset][categorical_features[dataset][j]]] = dict([(x.split('=')[0], x.split('=')[1]) for x in values])
+    return output
 def get_groups(dataset, sensitive_name, get_name=False):
     if get_name:
         if dataset == "census" and (sensitive_name == "sex" or sensitive_name == "gender"):
