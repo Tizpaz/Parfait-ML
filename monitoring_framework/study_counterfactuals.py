@@ -178,9 +178,15 @@ def create_model(model, dataset, algo):
         print(prediction_probabilities[f"counter_factual_{studying_feature}"])
         st.write("Categorical features will be studied by trying out all possible catories. Numerical features will be studied by trying out the maximium and minimium number in the training dataset.")
 
-        st.write(f"There are {prediction_probabilities.groupby([f'counter_factual_{studying_feature}']).size()[True]} counter-factuals out of {prediction_probabilities.shape[0]} data-points.")
-        st.write(f"There are {prediction_probabilities[prediction_probabilities['correctness'] == 'Incorrect'].groupby([f'counter_factual_{studying_feature}']).size()[True]} currently incorrectly labeled counter-factuals out of {prediction_probabilities.groupby(['correctness']).size()['Incorrect']} incorrect data-points.")
-        st.write(f"There are {prediction_probabilities[prediction_probabilities['correctness'] == 'Correct'].groupby([f'counter_factual_{studying_feature}']).size()[True]} currently correctly labeled counter-factuals out of {prediction_probabilities.groupby(['correctness']).size()['Correct']} correct data-points.")
+        num_counter_factuals = len(prediction_probabilities[prediction_probabilities[f'counter_factual_{studying_feature}'] == True])
+        num_incorrect_counter_factuals = len(prediction_probabilities[(prediction_probabilities[f'counter_factual_{studying_feature}'] == True) & (prediction_probabilities['correctness'] == 'Incorrect')])
+        num_correct_counter_factuals = len(prediction_probabilities[(prediction_probabilities[f'counter_factual_{studying_feature}'] == True) & (prediction_probabilities['correctness'] == 'Correct')])
+        
+        num_correct = len(prediction_probabilities[prediction_probabilities['correctness'] == 'Correct'])
+        num_incorrect = len(prediction_probabilities[prediction_probabilities['correctness'] == 'Incorrect'])
+        st.write(f"There are {num_counter_factuals} counter-factuals out of {len(prediction_probabilities)} data-points.")
+        st.write(f"There are {num_incorrect_counter_factuals} currently incorrectly labeled counter-factuals out of {num_incorrect} incorrect data-points.")
+        st.write(f"There are {num_correct_counter_factuals} currently correctly labeled counter-factuals out of {num_correct} correct data-points.")
         st.write("Click on a data-point below to test it out specifically")
         prob_fig_counterfactuals = plt.scatter(prediction_probabilities, x=prediction_probabilities.index, y="Probability", title=f"Counter-factual datapoints on {studying_feature}",
             color=f'counter_factual_{studying_feature}', color_discrete_map={False: "blue", True: "red"}, symbol="correctness", labels={"Probability": f"Probability of {list(int_to_cat_labels_map(dataset[0])['label'].values())[0]}"})
