@@ -237,7 +237,7 @@ def create_model(model, dataset, algo):
                                                     categorical_names=categorical_names, random_state=1, kernel_width=3)
             predict_fn = lambda x: trained_model.predict_proba(x)
             print(f"original label encoded {labeled_X_np[explain_sample]}")
-            exp = explainer.explain_instance(labeled_X_np[explain_sample], predict_fn)
+            exp = explainer.explain_instance(labeled_X_np[explain_sample], predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=50000)
             explaination_fig = exp.as_pyplot_figure()
             st.pyplot(explaination_fig)
 
@@ -276,7 +276,7 @@ def create_model(model, dataset, algo):
                                                 categorical_features=categorical_features[dataset[0]][:-1], 
                                                 categorical_names=categorical_names, random_state=1, kernel_width=3) # This de-randomizes the state, so that the two explained will be identical if the inputs are identical
                                                                                                                     # This helps remove doubt/confusion.
-            exp = explainer.explain_instance(counter_factuals_data[0], predict_fn)
+            exp = explainer.explain_instance(counter_factuals_data[0], predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=50000)
             explaination_fig = exp.as_pyplot_figure()
             
             sample_point = counter_factuals_labeled_data.copy()
