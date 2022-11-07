@@ -152,30 +152,47 @@ def create_model(model, dataset, algo):
             color=color_on, symbol="label" if color_on == "correctness" else "correctness", labels={"Probability": f"Probability of {list(int_to_cat_labels_map(dataset[0])['label'].values())[0]}"})
         selected_explain_points = plotly_events(prob_fig)
 
-        st.write("Counter factuals at a glance")
-        prediction_probabilities["counter_factual"] = False
-        for possible_sensitive_value in list(int_to_cat_labels_map(dataset[0])[columns[dataset[0]][dataset[2]-1]].keys()):
-            counter_factuals_X = X.copy()
-            counter_factuals_X[:,dataset[2]-1] = possible_sensitive_value
-            counter_factual_predictions = trained_model.predict(counter_factuals_X)
-            prediction_probabilities["counter_factual"] = prediction_probabilities["counter_factual"] | (counter_factual_predictions != predictions)
+        
 
-        st.write(f"There are {prediction_probabilities.groupby(['counter_factual']).size()[True]} counter-factuals out of {prediction_probabilities.shape[0]} data-points.")
-        st.write(f"There are {prediction_probabilities[prediction_probabilities['correctness'] == 'Incorrect'].groupby(['counter_factual']).size()[True]} currently incorrectly labeled counter-factuals out of {prediction_probabilities.groupby(['correctness']).size()['Incorrect']} incorrect data-points.")
-        st.write(f"There are {prediction_probabilities[prediction_probabilities['correctness'] == 'Correct'].groupby(['counter_factual']).size()[True]} currently correctly labeled counter-factuals out of {prediction_probabilities.groupby(['correctness']).size()['Correct']} correct data-points.")
-        prob_fig_counterfactuals = plt.scatter(prediction_probabilities, x=prediction_probabilities.index, y="Probability", title=f"Counter-factual datapoints on sensitive feature ({columns[dataset[0]][dataset[2]-1]})",
-            color="counter_factual", symbol="correctness", labels={"Probability": f"Probability of {list(int_to_cat_labels_map(dataset[0])['label'].values())[0]}"})
+        st.write("Counter factuals at a glance")
+
+        for feature_index in range(len(columns[dataset[0]][:-1])):
+                feature = columns[dataset[0]][:-1][feature_index]
+                prediction_probabilities[f"counter_factual_{feature}"] = False
+                if feature_index in categorical_features[dataset[0]][:-1]:
+                    for possible_sensitive_value in list(int_to_cat_labels_map(dataset[0])[feature].keys()):
+                        counter_factuals_X = X.copy()
+                        counter_factuals_X[:,feature_index] = possible_sensitive_value
+                        counter_factual_predictions = trained_model.predict(counter_factuals_X)
+                        prediction_probabilities[f"counter_factual_{feature}"] = prediction_probabilities[f"counter_factual_{feature}"] | (counter_factual_predictions != predictions)
+                else:
+                    counter_factuals_X = X.copy()
+                    counter_factuals_X[:,feature_index] = X[:,feature_index].max()
+                    counter_factual_max_predictions = trained_model.predict(counter_factuals_X)
+                    counter_factuals_X[:,feature_index] = X[:,feature_index].min()
+                    counter_factual_min_predictions = trained_model.predict(counter_factuals_X)
+                    prediction_probabilities[f"counter_factual_{feature}"] = prediction_probabilities[f"counter_factual_{feature}"] | (counter_factual_max_predictions != predictions) | (counter_factual_min_predictions != predictions)
+                    
+
+        studying_feature = st.selectbox("Select feature to study", columns[dataset[0]][:-1], index=dataset[2]-1)
+        print(prediction_probabilities[f"counter_factual_{studying_feature}"])
+        st.write("Categorical features will be studied by trying out all possible catories. Numerical features will be studied by trying out the maximium and minimium number in the training dataset.")
+
+        st.write(f"There are {prediction_probabilities.groupby([f'counter_factual_{studying_feature}']).size()[True]} counter-factuals out of {prediction_probabilities.shape[0]} data-points.")
+        st.write(f"There are {prediction_probabilities[prediction_probabilities['correctness'] == 'Incorrect'].groupby([f'counter_factual_{studying_feature}']).size()[True]} currently incorrectly labeled counter-factuals out of {prediction_probabilities.groupby(['correctness']).size()['Incorrect']} incorrect data-points.")
+        st.write(f"There are {prediction_probabilities[prediction_probabilities['correctness'] == 'Correct'].groupby([f'counter_factual_{studying_feature}']).size()[True]} currently correctly labeled counter-factuals out of {prediction_probabilities.groupby(['correctness']).size()['Correct']} correct data-points.")
+        st.write("Click on a data-point below to test it out specifically")
+        prob_fig_counterfactuals = plt.scatter(prediction_probabilities, x=prediction_probabilities.index, y="Probability", title=f"Counter-factual datapoints on {studying_feature}",
+            color=f'counter_factual_{studying_feature}', color_discrete_map={False: "blue", True: "red"}, symbol="correctness", labels={"Probability": f"Probability of {list(int_to_cat_labels_map(dataset[0])['label'].values())[0]}"})
         selected_explain_points_counterfactuals = plotly_events(prob_fig_counterfactuals)
 
-        if (selected_explain_points is not None and len(selected_explain_points) > 0) or (selected_explain_points_counterfactuals is not None and len(selected_explain_points_counterfactuals) > 0):
-            if (selected_explain_points is not None and len(selected_explain_points) > 0):
-                explain_sample = selected_explain_points[0]['x']
-            else: 
-                explain_sample = selected_explain_points_counterfactuals[0]['x']
+
+        if (selected_explain_points_counterfactuals is not None and len(selected_explain_points_counterfactuals) > 0):
+            explain_sample = selected_explain_points_counterfactuals[0]['x']
             sample_point = X[explain_sample:explain_sample+1]
             
             st.write(labeled_data[explain_sample:explain_sample+1])
-            st.write(f"Prediction probability: {selected_explain_points[0]['y']}")
+            st.write(f"Prediction probability: {selected_explain_points_counterfactuals[0]['y']}")
             import sklearn
             import lime
             import lime.lime_tabular
