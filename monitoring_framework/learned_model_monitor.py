@@ -120,7 +120,7 @@ def create_model(model, dataset, algo):
         
 
         # We now seek to explain a datapoint and how it is predicted
-        st.write("Classifying and explaining a datapoint")
+        st.write("Explaining a datapoint")
         from subjects.adf_data.census import census_data
         from subjects.adf_data.credit import credit_data
         from subjects.adf_data.bank import bank_data
