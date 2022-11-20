@@ -9,7 +9,10 @@ import os
 import matplotlib.pyplot as mplt
 from configs import columns, get_groups, labeled_df, categorical_features, categorical_features_names, int_to_cat_labels_map, cat_to_int_map
 
+import sys
 
+sys.path.append("./")
+sys.path.append("../")
 
 
 

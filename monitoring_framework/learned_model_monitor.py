@@ -8,7 +8,10 @@ import math
 import os
 import matplotlib.pyplot as mplt
 from configs import columns, get_groups, labeled_df, categorical_features, categorical_features_names
+import sys
 
+sys.path.append("./")
+sys.path.append("../")
 
 
 
