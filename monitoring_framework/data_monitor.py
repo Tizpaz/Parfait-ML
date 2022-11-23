@@ -10,8 +10,8 @@ import matplotlib.pyplot as mplt
 
 import sys
 
+sys.path.append("./")
 sys.path.append("../")
-
 
 
 
