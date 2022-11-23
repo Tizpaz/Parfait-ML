@@ -16,6 +16,34 @@ categorical_features = {
     "credit": [0,2,3,5,6,8,9,11,13,14,16,18,19,20]
 }
 
+numerical_bounds = {
+    "bank": '''-20,179
+0,99
+1,63
+0,1
+0,1'''.split('\n'),
+    "census": '''0,74
+0,99
+0,43
+1,99'''.split('\n'),
+    "compas": '''0,20
+1,10
+0,38
+0,1
+0,1
+0,1
+1,10
+1,10
+0,38'''.split('\n'),
+    "credit": '''4,72
+250,18424
+1,4
+1,4
+19,75
+1,4
+1,2'''.split('\n')
+}
+
 categorical_features_names = {
     # https://archive.ics.uci.edu/ml/datasets/bank+marketing for the categorical ones)) -- data also matches bank-full.csv in our dataset
     "bank": '''young-children(0-10)=0,teens(10-20)=1,20s=2,30s=3,40s=4,50s=5,60s=6,70s=7,80s=8,90s=9
