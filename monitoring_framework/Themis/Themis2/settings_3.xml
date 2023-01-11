@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<settings>
+    <name>Software</name>
+    <command>python loan_2.py</command>
+    <seed>42</seed>
+    <max_samples>10000</max_samples>
+    <min_samples>10</min_samples>
+    <inputs>
+        <input>
+            <name>sex</name>
+            <type>categorical</type>
+            <values>
+                <value>male</value>
+                <value>female</value>
+            </values>
+        </input>
+        <input>
+            <name>race</name>
+            <type>categorical</type>
+            <values>
+                <value>orange</value>
+                <value>green</value>
+                <value>blue</value>
+                <value>purple</value>
+            </values>
+        </input>
+        <input>
+            <name>income</name>
+            <type>categorical</type>
+            <values>
+                <value>0...50000</value>
+                <value>50001...100000</value>
+                <value>100001...</value>
+            </values>
+        </input>
+    </inputs>
+    <tests>
+        <test>
+            <function>discrimination_search</function>
+            <threshold>0.2</threshold>
+            <conf>0.98</conf>
+            <margin>0.02</margin>
+            <causal/>
+        </test>
+    </tests>
+</settings>
