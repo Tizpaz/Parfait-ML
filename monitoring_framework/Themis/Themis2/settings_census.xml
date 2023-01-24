@@ -1,7 +1,7 @@
 <settings>
     <name>Software</name>
     <seed>42</seed>
-    <max_samples>1000</max_samples>
+    <max_samples>5000</max_samples>
     <min_samples>3</min_samples>
     <inputs>
         <input>

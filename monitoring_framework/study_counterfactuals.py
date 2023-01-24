@@ -292,35 +292,6 @@ def create_model(model, dataset, algo):
             
             st.pyplot(explaination_fig)
 
-            # Themis integration
-            st.write("Themis study")
-            from Themis.Themis2.themis2 import Themis
-
-            st.write("Unfortunately, it takes too long to search for the whole discrimonation space at the moment. We are working on solutions to enable this capaiblity. For now, you must choose only a few columns to study against.")
-            themis_studying_feature = st.multiselect("Select feature to test wrt to", columns[dataset[0]][:-1])
-
-            # tests = [{"function": "discrimination_search", "threshold": 0.2, "conf": 0.98, "margin": 0.02, "group": True, "causal": False}]
-            if st.button("Run themis"):
-                tests = [{"function": "causal_discrimination", "threshold": 0.2, "conf": 0.98, "margin": 0.02, "input_name": themis_studying_feature},
-                {"function": "group_discrimination", "threshold": 0.2, "conf": 0.98, "margin": 0.02, "input_name": themis_studying_feature}]
-                file_path = os.path.realpath(os.path.dirname(__file__))
-                st.write(dataset[0])
-                S = Themis_S(trained_model, dataset)
-                t = Themis(S, tests, f"{file_path}/Themis/Themis2/settings_{dataset[0]}.xml")
-                
-                st.write(t.run())
-
-def Themis_S(trained_model, dataset):
-    def Themis_S(x):
-        intergerized_x = []
-        for i in range(len(x)):
-            if i in categorical_features[dataset[0]][:-1]:
-                intergerized_x.append(int(cat_to_int_map(dataset[0])[columns[dataset[0]][i]][x[i]]))
-            else:
-                intergerized_x.append(int(x[i]))
-        return list(trained_model.predict([intergerized_x])) == [trained_model.classes_[0]]
-    return Themis_S
-
         
 
 def main():

@@ -5,14 +5,16 @@ import pandas as pd
 import plotly.express as plt
 import plotly.tools as tools
 import math
+import pickle
+from Themis.Themis2.themis2 import Themis
 import os
 import matplotlib.pyplot as mplt
-from configs import columns, get_groups, labeled_df, categorical_features, categorical_features_names
+from configs import columns, get_groups, labeled_df, categorical_features, categorical_features_names, int_to_cat_labels_map, cat_to_int_map
+
 import sys
 
 sys.path.append("./")
 sys.path.append("../")
-
 
 
 
@@ -45,20 +47,60 @@ def is_pareto_efficient(costs, return_mask = True):
 def create_model(model, dataset, algo):
 
     # Plot the pareto optimal frontier
+
     df = pd.read_csv(os.path.dirname(__file__)+"/../Dataset" + "/" + f"{model}_{dataset[0]}_{dataset[1]}_{algo}.csv")
     df_masking = df.copy()
     df_masking["score"] = -df_masking["score"] # we want to find maximium for score
     mask = is_pareto_efficient(df_masking[["score","AOD"]].to_numpy(), True)
     df = df.assign(pareto_optimal=mask)
+
+    # Get themis data
+    df = df.assign(themis_group_score="NA")
+    df = df.assign(themis_causal_score="NA")
+    df_pareto_optimal = df[df["pareto_optimal"]]
+    count = 0
+    my_bar = st.progress(0.0)
+    for index, row in df_pareto_optimal.iterrows():
+
+        themis_studying_feature = [dataset[1] if dataset[1] != "gender" else "sex"]
+        tests = [{"function": "causal_discrimination", "threshold": 0.2, "conf": 0.98, "margin": 0.02, "input_name": themis_studying_feature},
+            {"function": "group_discrimination", "threshold": 0.2, "conf": 0.98, "margin": 0.02, "input_name": themis_studying_feature}]
+        write_file = row['write_file']
+        file_path = os.path.realpath(os.path.dirname(__file__))
+        file = open(file_path+"/"+f".{write_file}", "rb")
+        trained_model = pickle.load(file, encoding="latin-1")
+        S = Themis_S(trained_model, dataset)
+        themis_results = Themis(S, tests, f"{file_path}/Themis/Themis2/settings_{dataset[0]}.xml").run()
+        causal_answer = themis_results[0][1][1]
+        group_answer = themis_results[1][1][1]
+        df.loc[index, "themis_group_score"] = group_answer
+        df.loc[index, "themis_causal_score"] = causal_answer
+        df_pareto_optimal.loc[index, "themis_group_score"] = group_answer
+        df_pareto_optimal.loc[index, "themis_causal_score"] = causal_answer
+        count += 1
+        my_bar.progress(count/df_pareto_optimal.shape[0])
+        
+    df_pareto_optimal_max_AOD_row = df_pareto_optimal[df_pareto_optimal["AOD"] == df_pareto_optimal["AOD"].min()]
+    df_pareto_optimal_max_score_row = df_pareto_optimal[df_pareto_optimal["score"] == df_pareto_optimal["score"].max()]
+
+    
+
     zoom = st.slider("Zoom: ", min_value=0.0, max_value=1.0, step=.0001)
     st.write("Each dot below represents a model. Click on a dot to gain further insight on model parameters/decisions and classification explainability!")
     fig = plt.scatter(df, x = "score", y = "AOD", color='pareto_optimal', category_orders={'pareto_optimal': [False, True]}, color_discrete_sequence=['blue', 'red'],
-            title="Pareto Optimal Frontier", range_x=[zoom*.5+.5,1], range_y=[-0.01,.25-zoom*.25])
+            title="Pareto Optimal Frontier", hover_data = ["themis_group_score", "themis_causal_score"], range_x=[zoom*.5+.5,1], range_y=[-0.01,.25-zoom*.25])
+
 
     # "Listener" event for when the pareto optimal frontier is clicked on, determines the point that is clicked
     selected_points = plotly_events(fig)
+
+    st.write("The most accurate model:")
+    st.write(df_pareto_optimal_max_score_row[["score", "AOD", "themis_group_score", "themis_causal_score"]])
+    st.write("The most fair model:")
+    st.write(df_pareto_optimal_max_AOD_row[["score", "AOD", "themis_group_score", "themis_causal_score"]])
+
     if selected_points is not None and len(selected_points) > 0:
-        import pickle
+        
         
         selected_point = selected_points[0]['pointIndex']
         write_file = df.iloc[selected_point]['write_file']
@@ -120,56 +162,40 @@ def create_model(model, dataset, algo):
             max_depth = st.slider('Max depth', 0, 10, 2)
             dot_data = tree.export_graphviz(trained_model,max_depth=max_depth, feature_names=columns[dataset[0]][:-1], proportion = True, class_names=True, out_file=None, rounded=True)
             st.graphviz_chart(dot_data)
+    
+
+
+        # Themis integration
+        st.write("Themis study")
         
 
-        # We now seek to explain a datapoint and how it is predicted
-        st.write("Explaining a datapoint")
-        from subjects.adf_data.census import census_data
-        from subjects.adf_data.credit import credit_data
-        from subjects.adf_data.bank import bank_data
-        from subjects.adf_data.compas import compas_data
-        data = {"census":census_data, "credit":credit_data, "bank":bank_data, "compas": compas_data}
-        X, Y, input_shape, nb_classes = data[dataset[0]]()
-        Y = np.argmax(Y, axis=1)
-        X = X.astype(np.int64)
-        Y = Y.astype(np.int64)
-        labeled_data = labeled_df(pd.concat([pd.DataFrame(X),pd.DataFrame(Y)], axis=1), dataset[0])
-        labeled_data.columns = columns[dataset[0]]
-        explain_sample = st.slider("Pick a data point in the dataset for classification and explaination: ", min_value=0, max_value=int(len(labeled_data.index)-1), step=1)
-        sample_point = X[explain_sample:explain_sample+1]
-        
-        st.write(labeled_data[explain_sample:explain_sample+1])
+        st.write("Unfortunately, it takes too long to search for the whole discrimonation space at the moment. We are working on solutions to enable this capaiblity. For now, you must choose only a few columns to study against.")
+        themis_studying_feature = st.multiselect("Select feature to test wrt to", columns[dataset[0]][:-1], default= (dataset[1] if dataset[1] != "gender" else "sex"))
 
-        import sklearn
-        import lime
-        import lime.lime_tabular
-        from io import BytesIO
-        from PIL import Image
-        train, test, labeled_train, labeled_test = sklearn.model_selection.train_test_split(X, Y, train_size=0.80)
-        categorical_names = {}
-        # Processing features so that it fits for LIME
-        labeled_X_np = labeled_data.to_numpy()[:,:-1] # to array, minus the label
-        for feature in categorical_features[dataset[0]][:-1]:
-            le = sklearn.preprocessing.LabelEncoder()
-            le.fit(labeled_X_np[:, feature])
-            labeled_X_np[:, feature] = le.transform(labeled_X_np[:, feature])
-            categorical_names[feature] = list(le.classes_)
-        
-        
-        labeled_Y_np = labeled_data.to_numpy()[:,-1:] # to array, minus the label
-        le = sklearn.preprocessing.LabelEncoder()
-        le.fit(labeled_Y_np)
-        labeled_Y_np = le.transform(labeled_Y_np)
-        class_names = le.classes_
+        # tests = [{"function": "discrimination_search", "threshold": 0.2, "conf": 0.98, "margin": 0.02, "group": True, "causal": False}]
+        if st.button("Run themis"):
+            tests = [{"function": "causal_discrimination", "threshold": 0.1, "conf": 0.9999, "margin": 0.01, "input_name": themis_studying_feature},
+            {"function": "group_discrimination", "threshold": 0.1, "conf": 0.9999, "margin": 0.01, "input_name": themis_studying_feature}]
+            file_path = os.path.realpath(os.path.dirname(__file__))
+            st.write(dataset[0])
+            S = Themis_S(trained_model, dataset)
+            t = Themis(S, tests, f"{file_path}/Themis/Themis2/settings_{dataset[0]}.xml")
+            t_results = t.run()
+            st.write(t_results)
+            st.write(f"Causal discrimination score: {t_results[0][1][1]}")
+            st.write(f"Group discrimination score: {t_results[1][1][1]}")
 
-        explainer = lime.lime_tabular.LimeTabularExplainer(train ,feature_names = columns[dataset[0]][:-1],class_names=list(class_names),
-                                                   categorical_features=categorical_features[dataset[0]][:-1], 
-                                                   categorical_names=categorical_names, kernel_width=3)
-        predict_fn = lambda x: trained_model.predict_proba(x)
-        exp = explainer.explain_instance(labeled_X_np[explain_sample], predict_fn)
-        explaination_fig = exp.as_pyplot_figure()
-        st.write("Prediction correct" if trained_model.predict(sample_point) == Y[explain_sample:explain_sample+1] else "Prediction Incorrect")
-        st.pyplot(explaination_fig)
+def Themis_S(trained_model, dataset):
+    def Themis_S(x):
+        intergerized_x = []
+        for i in range(len(x)):
+            if i in categorical_features[dataset[0]][:-1]:
+                intergerized_x.append(int(cat_to_int_map(dataset[0])[columns[dataset[0]][i]][x[i]]))
+            else:
+                intergerized_x.append(int(x[i]))
+        return list(trained_model.predict([intergerized_x])) == [trained_model.classes_[0]]
+    return Themis_S
+
         
 
 def main():
@@ -183,7 +209,8 @@ def main():
     algorithms = ["mutation"]
 
     # Basic buttons to choose the correct models
-    picked_model = st.radio("Model:", models, horizontal = True)
+    
     picked_dataset = st.radio("Dataset:", datasets, horizontal = True)
+    picked_model = st.radio("Model:", models, horizontal = True)
     picked_algo = st.radio("Algorithm:", algorithms, horizontal = True)
     create_model(models_key[picked_model], picked_dataset, picked_algo)
