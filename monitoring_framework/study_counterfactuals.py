@@ -5,8 +5,10 @@ import pandas as pd
 import plotly.express as plt
 import plotly.tools as tools
 import math
+import random
 import os
 import matplotlib.pyplot as mplt
+import re
 from configs import columns, get_groups, labeled_df, categorical_features, categorical_features_names, int_to_cat_labels_map, cat_to_int_map
 
 import sys
@@ -195,41 +197,67 @@ def create_model(model, dataset, algo):
             color=f'counter_factual_{studying_feature}', color_discrete_map={False: "blue", True: "red"}, symbol="correctness", labels={"Probability": f"Probability of {list(int_to_cat_labels_map(dataset[0])['label'].values())[0]}"})
         selected_explain_points_counterfactuals = plotly_events(prob_fig_counterfactuals)
 
+        import sklearn
+        import lime
+        import lime.lime_tabular
+        from io import BytesIO
+        from PIL import Image
+        train, test, labeled_train, labeled_test = sklearn.model_selection.train_test_split(X, Y, train_size=0.80)
+        categorical_names = {}
+        # Processing features so that it fits for LIME
 
-        if (selected_explain_points_counterfactuals is not None and len(selected_explain_points_counterfactuals) > 0):
+        labeled_X_np = labeled_data.to_numpy()[:,:-1] # to array, minus the label
+        print(labeled_X_np)
+        feature_label_encoders = {}
+        for feature in categorical_features[dataset[0]][:-1]:
+            le_x = sklearn.preprocessing.LabelEncoder()
+            le_x.fit(labeled_X_np[:, feature])
+            feature_label_encoders[feature] = le_x
+            labeled_X_np[:, feature] = le_x.transform(labeled_X_np[:, feature])
+            categorical_names[feature] = list(le_x.classes_)
+        
+        
+        labeled_Y_np = labeled_data.to_numpy()[:,-1:] # to array, minus the label
+        le_y = sklearn.preprocessing.LabelEncoder()
+        le_y.fit(labeled_Y_np)
+        labeled_Y_np = le_y.transform(labeled_Y_np)
+        class_names = le_y.classes_
+
+        if (selected_explain_points_counterfactuals is None or len(selected_explain_points_counterfactuals) == 0):
+            
+            num_points = st.number_input("Number of points to sample", min_value=0, value=50)
+
+            st.write("Randomly sampled points LIME weighting")
+            random_points = labeled_X_np[random.sample(prediction_probabilities.index.tolist(), k=num_points)]
+            random_counter_points = labeled_X_np[random.sample(prediction_probabilities[prediction_probabilities[f'counter_factual_{studying_feature}']].index.tolist(), k=num_points)]
+
+            explainer = lime.lime_tabular.LimeTabularExplainer(train ,feature_names = columns[dataset[0]][:-1],class_names=list(class_names),
+                                                    categorical_features=categorical_features[dataset[0]][:-1], 
+                                                    categorical_names=categorical_names, random_state=1, kernel_width=3)
+            predict_fn = lambda x: trained_model.predict_proba(x)
+            exp_reg_weight_list = []
+            for row in random_points:
+                exp_reg = explainer.explain_instance(row, predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=50000)
+                exp_reg_weight_list.append({columns[dataset[0]][:-1][int(feature[0])]:abs(feature[1]) for feature in exp_reg.as_map()[1]})
+
+            exp_counter_weight_list = []
+            for row in random_counter_points:
+                exp_counter = explainer.explain_instance(row, predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=50000)
+                exp_counter_weight_list.append({columns[dataset[0]][:-1][int(feature[0])]:abs(feature[1]) for feature in exp_counter.as_map()[1]})
+
+            exp_reg_weight_frame = pd.DataFrame.from_records(exp_reg_weight_list)
+            exp_counter_weight_frame = pd.DataFrame.from_records(exp_counter_weight_list)
+            st.write(exp_counter_weight_frame.mean(axis=0))
+            averaged_reg_figure = plt.bar(exp_reg_weight_frame.mean(axis=0), title=f"LIME {num_points} randomly sampled average absolute probability change for each feature")
+            averaged_counter_figure = plt.bar(exp_counter_weight_frame.mean(axis=0), title=f"LIME {num_points} coutnerfactual randomly sampled average absolute probability change for each feature")
+            plotly_events(averaged_reg_figure)
+            plotly_events(averaged_counter_figure)
+        else:
             explain_sample = selected_explain_points_counterfactuals[0]['x']
             sample_point = X[explain_sample:explain_sample+1]
             
             st.write(labeled_data[explain_sample:explain_sample+1])
             st.write(f"Prediction probability: {selected_explain_points_counterfactuals[0]['y']}")
-            import sklearn
-            import lime
-            import lime.lime_tabular
-            from io import BytesIO
-            from PIL import Image
-            train, test, labeled_train, labeled_test = sklearn.model_selection.train_test_split(X, Y, train_size=0.80)
-            categorical_names = {}
-            # Processing features so that it fits for LIME
-
-            labeled_X_np = labeled_data.to_numpy()[:,:-1] # to array, minus the label
-            print(labeled_X_np)
-            feature_label_encoders = {}
-            for feature in categorical_features[dataset[0]][:-1]:
-                le_x = sklearn.preprocessing.LabelEncoder()
-                le_x.fit(labeled_X_np[:, feature])
-                feature_label_encoders[feature] = le_x
-                labeled_X_np[:, feature] = le_x.transform(labeled_X_np[:, feature])
-                categorical_names[feature] = list(le_x.classes_)
-            
-            
-            labeled_Y_np = labeled_data.to_numpy()[:,-1:] # to array, minus the label
-            le_y = sklearn.preprocessing.LabelEncoder()
-            le_y.fit(labeled_Y_np)
-            labeled_Y_np = le_y.transform(labeled_Y_np)
-            class_names = le_y.classes_
-
-
-
 
 
             st.write(f"Prediction: {int_to_cat_labels_map(dataset[0])['label'][str(trained_model.predict(sample_point)[0])]}")
@@ -241,11 +269,14 @@ def create_model(model, dataset, algo):
             predict_fn = lambda x: trained_model.predict_proba(x)
             print(f"original label encoded {labeled_X_np[explain_sample]}")
             exp = explainer.explain_instance(labeled_X_np[explain_sample], predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=50000)
-            explaination_fig = exp.as_pyplot_figure()
+            explaination_fig = as_pyplot_figure(exp.as_list(), list(class_names))
             st.pyplot(explaination_fig)
 
 
-            # Counter-factual study
+
+
+
+            # Counter-factual study (manually change the weights)
             
             st.write("Counter-factuals study")
 
@@ -271,16 +302,13 @@ def create_model(model, dataset, algo):
             for feature in categorical_features[dataset[0]][:-1]:
                 counter_factuals_data[:, feature] = feature_label_encoders[feature].transform(counter_factuals_labeled_data[:, feature])
             print(f"counter-factual label encoded: {counter_factuals_data}")
-            explainer = lime.lime_tabular.LimeTabularExplainer(train ,feature_names = columns[dataset[0]][:-1],class_names=list(class_names),
-                                                        categorical_features=categorical_features[dataset[0]][:-1], 
-                                                        categorical_names=categorical_names, kernel_width=3)
             predict_fn = lambda x: trained_model.predict_proba(x)
             explainer = lime.lime_tabular.LimeTabularExplainer(train ,feature_names = columns[dataset[0]][:-1],class_names=list(class_names),
                                                 categorical_features=categorical_features[dataset[0]][:-1], 
                                                 categorical_names=categorical_names, random_state=1, kernel_width=3) # This de-randomizes the state, so that the two explained will be identical if the inputs are identical
                                                                                                                     # This helps remove doubt/confusion.
             exp = explainer.explain_instance(counter_factuals_data[0], predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=50000)
-            explaination_fig = exp.as_pyplot_figure()
+            explaination_fig = as_pyplot_figure(exp.as_list(), list(class_names))
             
             sample_point = counter_factuals_labeled_data.copy()
             for feature in categorical_features[dataset[0]][:-1]:
@@ -292,6 +320,34 @@ def create_model(model, dataset, algo):
             
             st.pyplot(explaination_fig)
 
+
+
+# Code taken from https://github.com/marcotcr/lime/blob/master/lime/explanation.py, with updates to deal with differing color schemes, etc.
+def as_pyplot_figure(exp, class_names, label=1, figsize=(4,4), title=""):
+    """Returns the explanation as a pyplot figure.
+    Will throw an error if you don't have matplotlib installed
+    Args:
+        label: desired label. If you ask for a label for which an
+                explanation wasn't computed, will throw an exception.
+                Will be ignored for regression explanations.
+        figsize: desired size of pyplot in tuple format, defaults to (4,4).
+        kwargs: keyword arguments, passed to domain_mapper
+    Returns:
+        pyplot figure (barchart).
+    """
+    import matplotlib.pyplot as plt
+    fig = plt.figure(figsize=figsize)
+    vals = [x[1] for x in exp]
+    names = [x[0] for x in exp]
+    vals.reverse()
+    names.reverse()
+    colors = ['blue' if x > 0 else 'red' for x in vals]
+    pos = np.arange(len(exp)) + .5
+    plt.barh(pos, vals, align='center', color=colors)
+    plt.yticks(pos, names)
+    title = f'Local explanation for class {class_names[label]} {title}'
+    plt.title(title)
+    return fig
         
 
 def main():
