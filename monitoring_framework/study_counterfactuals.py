@@ -10,7 +10,11 @@ import os
 import matplotlib.pyplot as mplt
 import re
 from configs import columns, get_groups, labeled_df, categorical_features, categorical_features_names, int_to_cat_labels_map, cat_to_int_map
-
+from subjects.adf_data.census import census_data
+from subjects.adf_data.credit import credit_data
+from subjects.adf_data.bank import bank_data
+from subjects.adf_data.compas import compas_data
+data = {"census":census_data, "credit":credit_data, "bank":bank_data, "compas": compas_data}
 import sys
 
 sys.path.append("./")
@@ -69,12 +73,15 @@ def create_model(model, dataset, algo):
         trained_model = pickle.load(file, encoding="latin-1")
         
         if model == "LR": # For logistic regression, a bar graph is created to show the weights of the model
-            st.write(len(trained_model.coef_))
-            model_df = {"feature": columns[dataset[0]][:-1], "weight":trained_model.coef_[0], "sensitive_feature": [False]*len(trained_model.coef_[0])}
+            X, Y, input_shape, nb_classes = data[dataset[0]]()
+            model_df = {"feature": columns[dataset[0]][:-1], "weight":trained_model.coef_[0], "std_adj_weights":trained_model.coef_[0]*np.std(X, axis=0), "sensitive_feature": [False]*len(trained_model.coef_[0])}
             model_df["sensitive_feature"][dataset[2]-1] = True
             fig_2 = plt.bar(model_df, x="feature", y="weight", color="sensitive_feature", category_orders={"feature": columns[dataset[0]][:-1]},color_discrete_map={False:'blue', True:'red'},
-                title="The Logistic Regression Model's coefficient/weights for each feature")
+                title="The LR Model's coefficient/weights")
+            fig_3 = plt.bar(model_df, x="feature", y="std_adj_weights", color="sensitive_feature", category_orders={"feature": columns[dataset[0]][:-1]},color_discrete_map={False:'blue', True:'red'},
+                title="The LR Model's standard deviation adjusted weights")
             plotly_events(fig_2)
+            plotly_events(fig_3)
         elif model == "RF": # For random forest, trees are graphed to show the logic of the model
             from sklearn import tree
             import graphviz as graphviz
@@ -103,11 +110,15 @@ def create_model(model, dataset, algo):
                     dot_data = tree.export_graphviz(trained_model.estimators_[i],max_depth=max_depth, feature_names=columns[dataset[0]][:-1], proportion = True, class_names=True, out_file=None, rounded=True)
                     st.graphviz_chart(dot_data)
         elif model == "SV":
-            model_df = {"feature": range(len(trained_model.coef_[0])), "weight":trained_model.coef_[0], "sensitive_feature": [False]*len(trained_model.coef_[0])}
+            X, Y, input_shape, nb_classes = data[dataset[0]]()
+            model_df = {"feature": columns[dataset[0]][:-1], "weight":trained_model.coef_[0], "std_adj_weights":trained_model.coef_[0]*np.std(X, axis=0), "sensitive_feature": [False]*len(trained_model.coef_[0])}
             model_df["sensitive_feature"][dataset[2]-1] = True
-            fig_2 = plt.bar(model_df, x="feature", y="weight", color="sensitive_feature", category_orders={'sensitive_feature': [False, True]}, color_discrete_sequence=['blue', 'red'],
-                title="The Support Vector Machine Model's coefficient/weights for each feature")
+            fig_2 = plt.bar(model_df, x="feature", y="weight", color="sensitive_feature", category_orders={"feature": columns[dataset[0]][:-1]}, color_discrete_map={False:'blue', True:'red'},
+                title="The SVM Model's hyperplane slopes")
+            fig_3 = plt.bar(model_df, x="feature", y="std_adj_weights", color="sensitive_feature", category_orders={"feature": columns[dataset[0]][:-1]},color_discrete_map={False:'blue', True:'red'},
+                title="The SVM Model's standard deviation adjusted hyperplane slopes")
             plotly_events(fig_2)
+            plotly_events(fig_3)
 
         elif model == 'DT': # Just show the one model
             from sklearn import tree
@@ -126,11 +137,6 @@ def create_model(model, dataset, algo):
 
         # We now seek to explain a datapoint and how it is predicted
         st.write("Counter-factuals study")
-        from subjects.adf_data.census import census_data
-        from subjects.adf_data.credit import credit_data
-        from subjects.adf_data.bank import bank_data
-        from subjects.adf_data.compas import compas_data
-        data = {"census":census_data, "credit":credit_data, "bank":bank_data, "compas": compas_data}
         X, Y, input_shape, nb_classes = data[dataset[0]]()
         Y = np.argmax(Y, axis=1)
         X = X.astype(np.int64)
@@ -160,27 +166,29 @@ def create_model(model, dataset, algo):
         
 
         st.write("Counter factuals at a glance")
-
-        for feature_index in range(len(columns[dataset[0]][:-1])):
-                feature = columns[dataset[0]][:-1][feature_index]
-                prediction_probabilities[f"counter_factual_{feature}"] = False
-                if feature_index in categorical_features[dataset[0]][:-1]:
-                    for possible_sensitive_value in list(int_to_cat_labels_map(dataset[0])[feature].keys()):
-                        counter_factuals_X = X.copy()
-                        counter_factuals_X[:,feature_index] = possible_sensitive_value
-                        counter_factual_predictions = trained_model.predict(counter_factuals_X)
-                        prediction_probabilities[f"counter_factual_{feature}"] = prediction_probabilities[f"counter_factual_{feature}"] | (counter_factual_predictions != predictions)
-                else:
-                    counter_factuals_X = X.copy()
-                    counter_factuals_X[:,feature_index] = X[:,feature_index].max()
-                    counter_factual_max_predictions = trained_model.predict(counter_factuals_X)
-                    counter_factuals_X[:,feature_index] = X[:,feature_index].min()
-                    counter_factual_min_predictions = trained_model.predict(counter_factuals_X)
-                    prediction_probabilities[f"counter_factual_{feature}"] = prediction_probabilities[f"counter_factual_{feature}"] | (counter_factual_max_predictions != predictions) | (counter_factual_min_predictions != predictions)
-                    
-
         studying_feature = st.selectbox("Select feature to study", columns[dataset[0]][:-1], index=dataset[2]-1)
-        print(prediction_probabilities[f"counter_factual_{studying_feature}"])
+
+        feature_index = columns[dataset[0]][:-1].index(studying_feature)
+        prediction_probabilities[f"counter_factual_{studying_feature}"] = False
+
+        all_predictions = []
+        if feature_index in categorical_features[dataset[0]][:-1]:
+            for possible_sensitive_value in list(int_to_cat_labels_map(dataset[0])[studying_feature].keys()):
+                counter_factuals_X = X.copy()
+                
+                counter_factuals_X[:,feature_index] = possible_sensitive_value
+                counter_factual_predictions = trained_model.predict(counter_factuals_X)
+                all_predictions.append(counter_factual_predictions)
+                prediction_probabilities[f"counter_factual_{studying_feature}"] = prediction_probabilities[f"counter_factual_{studying_feature}"] | (counter_factual_predictions != predictions)
+        else:
+            counter_factuals_X = X.copy()
+            counter_factuals_X[:,feature_index] = X[:,feature_index].max()
+            counter_factual_max_predictions = trained_model.predict(counter_factuals_X)
+            counter_factuals_X[:,feature_index] = X[:,feature_index].min()
+            counter_factual_min_predictions = trained_model.predict(counter_factuals_X)
+            prediction_probabilities[f"counter_factual_{studying_feature}"] = prediction_probabilities[f"counter_factual_{studying_feature}"] | (counter_factual_max_predictions != predictions) | (counter_factual_min_predictions != predictions)
+            
+
         st.write("Categorical features will be studied by trying out all possible catories. Numerical features will be studied by trying out the maximium and minimium number in the training dataset.")
 
         num_counter_factuals = len(prediction_probabilities[prediction_probabilities[f'counter_factual_{studying_feature}'] == True])
@@ -225,7 +233,7 @@ def create_model(model, dataset, algo):
 
         if (selected_explain_points_counterfactuals is None or len(selected_explain_points_counterfactuals) == 0):
             
-            num_points = st.number_input("Number of points to sample", min_value=0, value=50)
+            num_points = st.number_input("Number of points to sample", min_value=0, value=min(50,num_counter_factuals) )
 
             st.write("Randomly sampled points LIME weighting")
             random_points = labeled_X_np[random.sample(prediction_probabilities.index.tolist(), k=num_points)]

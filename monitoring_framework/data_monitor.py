@@ -76,11 +76,30 @@ def main():
                 bargap=0.2, # gap between bars of adjacent location coordinates
                 bargroupgap=0.1 # gap between bars of the same location coordinates
             )
+
+
+            feature_sensitive_percentage = X_labeled[bar_graph[0]["x"]][(X_labeled[sensitive_name]==group_0)].value_counts()/(X_labeled[bar_graph[0]["x"]].value_counts())*100
+            feature_sensitive_percentage = feature_sensitive_percentage.rename(group_0)
+            fig3 = plt.bar(feature_sensitive_percentage, title=f"Histogram of % {group_0} v.s. {bar_graph[0]['x']} scaled")
+            fig3.update_layout(
+                title_text=f"Histogram of % {group_0} v.s. {bar_graph[0]['x']} scaled", # title of plot
+                xaxis_title_text=f"{bar_graph[0]['x']}", # xaxis label
+                yaxis_title_text='Percentage', # yaxis label
+                bargap=0.2, # gap between bars of adjacent location coordinates
+                bargroupgap=0.1 # gap between bars of the same location coordinates
+            )
+
             if bar_graph[0]["x"] in cat_labels.keys():
                 fig2.update_xaxes(categoryorder='array', categoryarray=list(cat_labels[bar_graph[0]["x"]].values()))
+                fig3.update_xaxes(categoryorder='array', categoryarray=list(cat_labels[bar_graph[0]["x"]].values()))
             else:
                 fig2.update_xaxes(categoryorder='category ascending')
+                fig3.update_xaxes(categoryorder='category ascending')
+            
+            
             hist_graph = plotly_events(fig2)
+            hist_graph = plotly_events(fig3)
+            st.write(f"The average percentage for {group_0} is {X_labeled[X_labeled[sensitive_name]==group_0][sensitive_name].count()/X_labeled[sensitive_name].count()}")
 
         # fig2 = plt.bar()
     

@@ -14,6 +14,12 @@ import sys
 sys.path.append("./")
 sys.path.append("../")
 
+from subjects.adf_data.census import census_data
+from subjects.adf_data.credit import credit_data
+from subjects.adf_data.bank import bank_data
+from subjects.adf_data.compas import compas_data
+data = {"census":census_data, "credit":credit_data, "bank":bank_data, "compas": compas_data}
+
 
 
 def is_pareto_efficient(costs, return_mask = True):
@@ -41,6 +47,56 @@ def is_pareto_efficient(costs, return_mask = True):
     else:
         return is_efficient
 
+
+def num_parfait_counterfactuals(trained_model, dataset):
+
+    X, Y, input_shape, nb_classes = data[dataset[0]]()
+    Y = np.argmax(Y, axis=1)
+    X = X.astype(np.int64)
+    Y = Y.astype(np.int64)
+    nonlabeled_data = pd.concat([pd.DataFrame(X),pd.DataFrame(Y)], axis=1)
+    nonlabeled_data.columns = columns[dataset[0]]
+    labeled_data = labeled_df(pd.concat([pd.DataFrame(X),pd.DataFrame(Y)], axis=1), dataset[0])
+    labeled_data.columns = columns[dataset[0]]
+
+    # Get predicted probability for each data point
+    predictions_probs = trained_model.predict_proba(X)
+    # (predictions_probs)
+    prediction_probabilities = pd.DataFrame(np.array(predictions_probs)[:,0], columns=["Probability"])
+    predictions = trained_model.predict(X)
+    prediction_probabilities["label"] = predictions
+    prediction_probabilities["correctness"] = (predictions == Y)
+    prediction_probabilities["label"] = prediction_probabilities["label"].astype("string").map(int_to_cat_labels_map(dataset[0])['label'])
+    prediction_probabilities["correctness"] = prediction_probabilities["correctness"].map({False: "Incorrect", True: "Correct"})
+    # prediction_probabilities["label_correctness"] = prediction_probabilities["label"] + ", "+prediction_probabilities["prediction_correct"]
+
+    studying_feature = columns[dataset[0]][:-1][dataset[2]-1]
+
+    feature_index = columns[dataset[0]][:-1].index(studying_feature)
+    prediction_probabilities[f"counter_factual_{studying_feature}"] = False
+
+    all_predictions = []
+    if feature_index in categorical_features[dataset[0]][:-1]:
+        for possible_sensitive_value in list(int_to_cat_labels_map(dataset[0])[studying_feature].keys()):
+            counter_factuals_X = X.copy()
+            
+            counter_factuals_X[:,feature_index] = possible_sensitive_value
+            counter_factual_predictions = trained_model.predict(counter_factuals_X)
+            all_predictions.append(counter_factual_predictions)
+            prediction_probabilities[f"counter_factual_{studying_feature}"] = prediction_probabilities[f"counter_factual_{studying_feature}"] | (counter_factual_predictions != predictions)
+    else:
+        counter_factuals_X = X.copy()
+        counter_factuals_X[:,feature_index] = X[:,feature_index].max()
+        counter_factual_max_predictions = trained_model.predict(counter_factuals_X)
+        counter_factuals_X[:,feature_index] = X[:,feature_index].min()
+        counter_factual_min_predictions = trained_model.predict(counter_factuals_X)
+        prediction_probabilities[f"counter_factual_{studying_feature}"] = prediction_probabilities[f"counter_factual_{studying_feature}"] | (counter_factual_max_predictions != predictions) | (counter_factual_min_predictions != predictions)
+        
+    num_counter_factuals = len(prediction_probabilities[prediction_probabilities[f'counter_factual_{studying_feature}'] == True])
+    num_incorrect_counter_factuals = len(prediction_probabilities[(prediction_probabilities[f'counter_factual_{studying_feature}'] == True) & (prediction_probabilities['correctness'] == 'Incorrect')])
+    num_correct_counter_factuals = len(prediction_probabilities[(prediction_probabilities[f'counter_factual_{studying_feature}'] == True) & (prediction_probabilities['correctness'] == 'Correct')])
+    return num_counter_factuals, len(prediction_probabilities)
+
 # Plots all the graphs
 def create_model(model, dataset, algo):
 
@@ -56,7 +112,7 @@ def create_model(model, dataset, algo):
     df = df.assign(themis_group_score="NA")
     df = df.assign(themis_causal_score="NA")
     df_pareto_optimal = df[df["pareto_optimal"]]
-    count = 0
+    # count = 0
 
     df_worst = df[df["AOD"] == df["AOD"].max()]
     df_pareto_optimal_max_AOD_row = df_pareto_optimal[df_pareto_optimal["AOD"] == df_pareto_optimal["AOD"].min()]
@@ -71,16 +127,10 @@ def create_model(model, dataset, algo):
         file_path = os.path.realpath(os.path.dirname(__file__))
         file = open(file_path+"/"+f".{write_file}", "rb")
         trained_model = pickle.load(file, encoding="latin-1")
-        S = Themis_S(trained_model, dataset)
-        themis_results = Themis(S, tests, f"{file_path}/Themis/Themis2/settings_{dataset[0]}.xml").run()
-        causal_answer = themis_results[0][1][1]
-        group_answer = themis_results[1][1][1]
-        row["themis_group_score"] = group_answer
-        row["themis_causal_score"] = causal_answer
-        count += 1
+        row["num_parfait_counterfactuals"], row["total_sampled_points"] = num_parfait_counterfactuals(trained_model, dataset)
     
 
-    return df_worst[["score", "AOD", "themis_group_score", "themis_causal_score"]], df_pareto_optimal_max_score_row[["score", "AOD", "themis_group_score", "themis_causal_score"]], df_pareto_optimal_max_AOD_row[["score", "AOD", "themis_group_score", "themis_causal_score"]]
+    return df_worst[["num_parfait_counterfactuals", "total_sampled_points"]], df_pareto_optimal_max_score_row[["num_parfait_counterfactuals", "total_sampled_points"]], df_pareto_optimal_max_AOD_row[["num_parfait_counterfactuals", "total_sampled_points"]]
 
     
 
@@ -98,7 +148,7 @@ def Themis_S(trained_model, dataset):
 
 
 def convert_df(df):
-   return df.to_csv("tested_themis_summary.csv", index=False)
+   return df.to_csv("tested_parfait-ml_counterfactual_summary.csv", index=False)
 
 def main():
     models = ["LR","RF","SV","DT"]
@@ -114,7 +164,7 @@ def main():
     
     picked_algo = "mutation"
     count = 0
-    score_dataframe = pd.DataFrame(columns = ['score', 'AOD', 'themis_group_score', 'themis_causal_score', 'dataset', 'model', 'optimal'])
+    score_dataframe = pd.DataFrame(columns = ["num_parfait_counterfactuals","total_sampled_points", 'dataset', 'model', 'optimal'])
 
     for d in datasets:
         for m in models:

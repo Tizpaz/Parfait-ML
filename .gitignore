@@ -3,6 +3,7 @@
 *.pyc
 *.out
 *.png
+tested_themis_summary.csv
 bank_age/
 census_gender/
 census_race/
