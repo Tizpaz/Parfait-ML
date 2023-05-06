@@ -1,0 +1,19 @@
+dataset,optimal,n_estimators,criterion,max_depth,min_samples_split,min_samples_leaf,min_weight_fraction_leaf,max_features,max_leaf_nodes,min_impurity_decrease,bootstrap,oob_score,warm_start,ccp_alpha,max_samples,random_state,verbose,n_jobs
+"census, gender",Worst,90,log_loss,None,4,2,0.021438405407872924,log2,None,0.0,True,True,True,0.0,None,2019,0,None
+"census, gender",Score,89,log_loss,None,5,2,0.0005484677351692051,auto,None,0.0,True,False,True,0.0,None,2019,0,None
+"census, gender",Fairness,57,log_loss,None,7,4,0.09620758548907342,sqrt,None,0.0,True,False,False,0.0,None,2019,0,None
+"census, race",Worst,59,log_loss,None,4,1,0.06303406427294758,sqrt,None,0.0,True,True,False,0.0,None,2019,0,None
+"census, race",Score,99,gini,20,7,2,0.0005404346918920825,sqrt,None,0.0,True,False,False,0.0,None,2019,0,None
+"census, race",Fairness,66,entropy,15,5,3,0.006451839440133385,None,None,0.0,True,False,True,0.0,None,2019,0,None
+"credit, gender",Worst,55,gini,11,3,1,0.02753609163632693,auto,None,0.0,True,True,True,0.0,None,2019,0,None
+"credit, gender",Score,58,gini,10,3,4,7.702505561708024e-05,sqrt,None,0.0,True,True,True,0.0,None,2019,0,None
+"credit, gender",Fairness,93,log_loss,None,8,3,0.09044978250540493,sqrt,None,0.0,True,True,True,0.0,None,2019,0,None
+"bank, age",Worst,73,entropy,None,2,3,0.06569323715242596,None,None,0.0,True,True,True,0.0,None,2019,0,None
+"bank, age",Score,100,gini,11,2,1,0.0,None,None,0.0,True,False,False,0.0,None,2019,0,None
+"bank, age",Fairness,50,gini,18,3,4,0.047273226545475604,log2,None,0.0,True,True,True,0.0,None,2019,0,None
+"compas, gender",Worst,100,gini,None,2,1,0.0,None,None,0.0,True,False,False,0.0,None,2019,0,None
+"compas, gender",Score,100,gini,None,2,1,0.027652354098959026,None,None,0.0,True,False,False,0.0,None,2019,0,None
+"compas, gender",Fairness,100,gini,None,2,1,0.027652354098959026,None,None,0.0,True,False,False,0.0,None,2019,0,None
+"compas, race",Worst,100,gini,None,2,1,0.0,None,None,0.0,True,False,False,0.0,None,2019,0,None
+"compas, race",Score,57,gini,None,9,4,0.07395383399554571,sqrt,None,0.0,True,False,False,0.0,None,2019,0,None
+"compas, race",Fairness,57,gini,None,9,4,0.07395383399554571,sqrt,None,0.0,True,False,False,0.0,None,2019,0,None

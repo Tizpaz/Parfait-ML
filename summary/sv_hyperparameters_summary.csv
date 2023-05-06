@@ -1,0 +1,19 @@
+dataset,optimal,C,kernel,degree,gamma,coef0,shrinking,probability,tol,cache_size,class_weight,verbose,max_iter,decision_function_shape,break_ties,random_state
+"census, gender",Worst,4.095055553459582,linear,10,scale,5.912251424754711,False,True,0.5409397753137253,229.27411725755096,balanced,0,1022,ovr,False,2019
+"census, gender",Score,1.254855099496782,linear,7,scale,1.6881820917869064,False,True,0.24863314427874655,234.46908960161022,balanced,0,971,ovr,True,2019
+"census, gender",Fairness,1.254855099496782,linear,7,scale,1.6881820917869064,False,True,0.24863314427874655,234.46908960161022,balanced,0,971,ovr,True,2019
+"census, race",Worst,2.8020487241085625,linear,6,scale,5.694737901498415,False,True,0.7818051683327858,268.69868561905764,balanced,0,955,ovr,False,2019
+"census, race",Score,2.455335736385777,linear,7,auto,5.88213413093845,False,True,0.25674075058514173,216.34478284219347,balanced,0,977,ovo,False,2019
+"census, race",Fairness,0.0005944318107026344,linear,2,auto,4.362727652901944,True,True,0.27844711380045656,248.40225638916147,balanced,0,969,ovo,False,2019
+"credit, gender",Worst,1.0,linear,3,scale,0.0,True,True,0.001,250.0,None,0,1000,ovr,False,2019
+"credit, gender",Score,1.0,linear,3,scale,0.0,True,True,0.001,250.0,None,0,1000,ovr,False,2019
+"credit, gender",Fairness,1.6281859208368885,linear,3,scale,3.562504194739878,False,True,0.9642535597281598,225.78415289969217,balanced,0,1028,ovr,False,2019
+"bank, age",Worst,3.3809075449970707,linear,1,auto,1.8188587130182432,False,True,0.5485891592919433,217.92044324081553,balanced,0,971,ovr,False,2019
+"bank, age",Score,3.554839170260602,linear,9,auto,2.1357591650058616,False,True,0.20236299796093443,254.32618515966408,None,0,965,ovr,True,2019
+"bank, age",Fairness,1.341990803047646,linear,0,auto,8.379271493743111,True,True,0.465563674419823,200.539060801272,balanced,0,1005,ovo,False,2019
+"compas, gender",Worst,1.0,linear,3,scale,0.0,True,True,0.001,250.0,None,0,1000,ovr,False,2019
+"compas, gender",Score,1.0,linear,3,scale,0.0,True,True,0.001,250.0,None,0,1000,ovr,False,2019
+"compas, gender",Fairness,1.0,linear,3,scale,0.0,True,True,0.001,250.0,None,0,1000,ovr,False,2019
+"compas, race",Worst,1.0,linear,3,scale,0.0,True,True,0.001,250.0,None,0,1000,ovr,False,2019
+"compas, race",Score,1.0,linear,3,scale,0.0,True,True,0.001,250.0,None,0,1000,ovr,False,2019
+"compas, race",Fairness,1.0,linear,3,scale,0.0,True,True,0.001,250.0,None,0,1000,ovr,False,2019

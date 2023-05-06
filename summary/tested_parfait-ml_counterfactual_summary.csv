@@ -1,0 +1,73 @@
+num_parfait_counterfactuals,total_sampled_points,dataset,model,optimal
+456,32561,"census, gender",Logistic Regression,Worst
+404,32561,"census, gender",Logistic Regression,Score
+125,32561,"census, gender",Logistic Regression,Fairness
+1590,32561,"census, gender",Random Forest,Worst
+973,32561,"census, gender",Random Forest,Score
+543,32561,"census, gender",Random Forest,Fairness
+646,32561,"census, gender",Support Vector Machine,Worst
+39,32561,"census, gender",Support Vector Machine,Score
+39,32561,"census, gender",Support Vector Machine,Fairness
+1899,32561,"census, gender",Decision Tree,Worst
+1899,32561,"census, gender",Decision Tree,Score
+0,32561,"census, gender",Decision Tree,Fairness
+1728,32561,"census, race",Logistic Regression,Worst
+1111,32561,"census, race",Logistic Regression,Score
+0,32561,"census, race",Logistic Regression,Fairness
+456,32561,"census, race",Random Forest,Worst
+739,32561,"census, race",Random Forest,Score
+0,32561,"census, race",Random Forest,Fairness
+1499,32561,"census, race",Support Vector Machine,Worst
+544,32561,"census, race",Support Vector Machine,Score
+8,32561,"census, race",Support Vector Machine,Fairness
+1084,32561,"census, race",Decision Tree,Worst
+0,32561,"census, race",Decision Tree,Score
+0,32561,"census, race",Decision Tree,Fairness
+63,1000,"credit, gender",Logistic Regression,Worst
+42,1000,"credit, gender",Logistic Regression,Score
+0,1000,"credit, gender",Logistic Regression,Fairness
+17,1000,"credit, gender",Random Forest,Worst
+21,1000,"credit, gender",Random Forest,Score
+4,1000,"credit, gender",Random Forest,Fairness
+0,1000,"credit, gender",Support Vector Machine,Worst
+0,1000,"credit, gender",Support Vector Machine,Score
+0,1000,"credit, gender",Support Vector Machine,Fairness
+0,1000,"credit, gender",Decision Tree,Worst
+46,1000,"credit, gender",Decision Tree,Score
+0,1000,"credit, gender",Decision Tree,Fairness
+9583,45211,"bank, age",Logistic Regression,Worst
+1014,45211,"bank, age",Logistic Regression,Score
+2192,45211,"bank, age",Logistic Regression,Fairness
+0,45211,"bank, age",Random Forest,Worst
+6732,45211,"bank, age",Random Forest,Score
+0,45211,"bank, age",Random Forest,Fairness
+21516,45211,"bank, age",Support Vector Machine,Worst
+610,45211,"bank, age",Support Vector Machine,Score
+3320,45211,"bank, age",Support Vector Machine,Fairness
+14729,45211,"bank, age",Decision Tree,Worst
+0,45211,"bank, age",Decision Tree,Score
+0,45211,"bank, age",Decision Tree,Fairness
+668,7214,"compas, gender",Logistic Regression,Worst
+0,7214,"compas, gender",Logistic Regression,Score
+0,7214,"compas, gender",Logistic Regression,Fairness
+139,7214,"compas, gender",Random Forest,Worst
+0,7214,"compas, gender",Random Forest,Score
+0,7214,"compas, gender",Random Forest,Fairness
+0,7214,"compas, gender",Support Vector Machine,Worst
+0,7214,"compas, gender",Support Vector Machine,Score
+0,7214,"compas, gender",Support Vector Machine,Fairness
+0,7214,"compas, gender",Decision Tree,Worst
+0,7214,"compas, gender",Decision Tree,Score
+0,7214,"compas, gender",Decision Tree,Fairness
+781,7214,"compas, race",Logistic Regression,Worst
+0,7214,"compas, race",Logistic Regression,Score
+0,7214,"compas, race",Logistic Regression,Fairness
+149,7214,"compas, race",Random Forest,Worst
+0,7214,"compas, race",Random Forest,Score
+0,7214,"compas, race",Random Forest,Fairness
+0,7214,"compas, race",Support Vector Machine,Worst
+0,7214,"compas, race",Support Vector Machine,Score
+0,7214,"compas, race",Support Vector Machine,Fairness
+0,7214,"compas, race",Decision Tree,Worst
+0,7214,"compas, race",Decision Tree,Score
+0,7214,"compas, race",Decision Tree,Fairness

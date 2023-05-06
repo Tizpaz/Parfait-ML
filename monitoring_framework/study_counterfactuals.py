@@ -7,6 +7,7 @@ import plotly.tools as tools
 import math
 import random
 import os
+from scipy.optimize import dual_annealing
 import matplotlib.pyplot as mplt
 import re
 from configs import columns, get_groups, labeled_df, categorical_features, categorical_features_names, int_to_cat_labels_map, cat_to_int_map
@@ -60,6 +61,7 @@ def create_model(model, dataset, algo):
     st.write("Each dot below represents a model. Click on a dot to gain further insight on model parameters/decisions and classification explainability!")
     fig = plt.scatter(df, x = "score", y = "AOD", color='pareto_optimal', category_orders={'pareto_optimal': [False, True]}, color_discrete_sequence=['blue', 'red'],
             title="Pareto Optimal Frontier", range_x=[zoom*.5+.5,1], range_y=[-0.01,.25-zoom*.25])
+    
 
     # "Listener" event for when the pareto optimal frontier is clicked on, determines the point that is clicked
     selected_points = plotly_events(fig)
@@ -233,33 +235,86 @@ def create_model(model, dataset, algo):
 
         if (selected_explain_points_counterfactuals is None or len(selected_explain_points_counterfactuals) == 0):
             
-            num_points = st.number_input("Number of points to sample", min_value=0, value=min(50,num_counter_factuals) )
+            # num_points = st.number_input("Number of points to sample", min_value=0, value=min(50,num_counter_factuals) )
 
             st.write("Randomly sampled points LIME weighting")
-            random_points = labeled_X_np[random.sample(prediction_probabilities.index.tolist(), k=num_points)]
-            random_counter_points = labeled_X_np[random.sample(prediction_probabilities[prediction_probabilities[f'counter_factual_{studying_feature}']].index.tolist(), k=num_points)]
+            
 
+            # Use simulated annealing
+            NUM_MCMC_SAMPLES = 3
+
+            # TO ADAPT TO HOME
+            feature_sensitive_percentage = {}
+            percentages_averages = {}
             explainer = lime.lime_tabular.LimeTabularExplainer(train ,feature_names = columns[dataset[0]][:-1],class_names=list(class_names),
                                                     categorical_features=categorical_features[dataset[0]][:-1], 
                                                     categorical_names=categorical_names, random_state=1, kernel_width=3)
             predict_fn = lambda x: trained_model.predict_proba(x)
+            category = "sex" if dataset[1] == "gender" else dataset[1]
+            group_0, group_1 = get_groups(dataset[0], category, get_name=True)
+            for col in columns[dataset[0]]:
+                
+                feature_sensitive_percentage[col] = labeled_data[col][(labeled_data[category]==group_0)].value_counts()/(labeled_data[col].value_counts())*100
+                percentages_averages[col] = labeled_data[labeled_data[category]==group_0][category].count()/labeled_data[category].count()*100
+            
+            def sensitive_discrimination_score(samples, reason = False):
+                assert(len(samples) == NUM_MCMC_SAMPLES)
+                feature_discrimination_impact = {col:0 for col in columns[dataset[0]][:-1]}
+                for data_point in samples:
+                    data_point = int(data_point)
+                    if reason:
+                        num_samples=50000
+                    else:
+                        num_samples = 5000
+                    exp_reg = explainer.explain_instance(labeled_X_np[data_point], predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=num_samples)
+                    for feature_entry in exp_reg.as_map()[1]:
+                        cur_column = columns[dataset[0]][:-1][int(feature_entry[0])]
+                        category_sensitive_discrim_factor = feature_sensitive_percentage[cur_column][labeled_data.iloc[data_point][cur_column]] - percentages_averages[cur_column]
+                        model_discrim_factor = feature_entry[1]
+                        feature_discrimination_impact[cur_column]+= category_sensitive_discrim_factor*model_discrim_factor
+                
+                # Logic: absolute value makes all value positive. We take max for the feature that is causing most unfairness. Return negative, because dual annealing minimizes the function
+                # and we want to find points in the feature space that are clearly indicitive of unfairness.
+                if reason:
+                    max_num = list(feature_discrimination_impact.values())[0]
+                    reason = list(feature_discrimination_impact.keys())[0]
+                    for feature in feature_discrimination_impact.keys():
+                        if feature_discrimination_impact[feature] > max_num:
+                            max_num = abs(feature_discrimination_impact[feature])
+                            reason = feature
+                    return -max_num/NUM_MCMC_SAMPLES, reason
+                return -max([abs(e) for e in list(feature_discrimination_impact.values())])/NUM_MCMC_SAMPLES
+
+            max_function_call = st.number_input("How many trials are we running",min_value=1, max_value=100000, value=1000)
+            best_points = dual_annealing(sensitive_discrimination_score, [(0, X.shape[0])]*NUM_MCMC_SAMPLES,no_local_search=True, maxfun=max_function_call)
+            print(best_points)
+            random_points = labeled_X_np[list(map(int, best_points.x))]
+            # random_counter_points = labeled_X_np[random.sample(prediction_probabilities[prediction_probabilities[f'counter_factual_{studying_feature}']].index.tolist(), k=num_points)]
+            reasoning = sensitive_discrimination_score(best_points.x, reason=True)
+            st.write(f"Features that cause most unfairness: {reasoning[1]}")
+            st.write(f"Unfairness score: {reasoning[0]}")
+
             exp_reg_weight_list = []
+            count = 0
             for row in random_points:
+                st.write(f"Picked point {list(map(int, best_points.x))[count]}")
                 exp_reg = explainer.explain_instance(row, predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=50000)
-                exp_reg_weight_list.append({columns[dataset[0]][:-1][int(feature[0])]:abs(feature[1]) for feature in exp_reg.as_map()[1]})
+                explaination_fig = as_pyplot_figure(exp_reg.as_list(), list(class_names))
+                st.pyplot(explaination_fig)
+                count += 1
 
             exp_counter_weight_list = []
-            for row in random_counter_points:
-                exp_counter = explainer.explain_instance(row, predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=50000)
-                exp_counter_weight_list.append({columns[dataset[0]][:-1][int(feature[0])]:abs(feature[1]) for feature in exp_counter.as_map()[1]})
+            # for row in random_counter_points:
+            #     exp_counter = explainer.explain_instance(row, predict_fn, num_features=len(columns[dataset[0]][:-1]), num_samples=50000)
+            #     exp_counter_weight_list.append({columns[dataset[0]][:-1][int(feature[0])]:abs(feature[1]) for feature in exp_counter.as_map()[1]})
 
             exp_reg_weight_frame = pd.DataFrame.from_records(exp_reg_weight_list)
             exp_counter_weight_frame = pd.DataFrame.from_records(exp_counter_weight_list)
             st.write(exp_counter_weight_frame.mean(axis=0))
-            averaged_reg_figure = plt.bar(exp_reg_weight_frame.mean(axis=0), title=f"LIME {num_points} randomly sampled average absolute probability change for each feature")
-            averaged_counter_figure = plt.bar(exp_counter_weight_frame.mean(axis=0), title=f"LIME {num_points} coutnerfactual randomly sampled average absolute probability change for each feature")
-            plotly_events(averaged_reg_figure)
-            plotly_events(averaged_counter_figure)
+            # averaged_reg_figure = plt.bar(exp_reg_weight_frame.mean(axis=0), title=f"LIME {num_points} randomly sampled average absolute probability change for each feature")
+            # averaged_counter_figure = plt.bar(exp_counter_weight_frame.mean(axis=0), title=f"LIME {num_points} coutnerfactual randomly sampled average absolute probability change for each feature")
+            # plotly_events(averaged_reg_figure)
+            # plotly_events(averaged_counter_figure)
         else:
             explain_sample = selected_explain_points_counterfactuals[0]['x']
             sample_point = X[explain_sample:explain_sample+1]
@@ -357,6 +412,9 @@ def as_pyplot_figure(exp, class_names, label=1, figsize=(4,4), title=""):
     plt.title(title)
     return fig
         
+
+
+
 
 def main():
     models = ["LR","RF","SV","DT"]

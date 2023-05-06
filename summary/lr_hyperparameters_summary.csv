@@ -1,0 +1,19 @@
+dataset,optimal,penalty,dual,tol,C,fit_intercept,intercept_scaling,solver,max_iter,multi_class,l1_ration,random_state,class_weight,verbose,warm_start,n_jobs
+"census, gender",Worst,l2,False,0.5684828555351359,10.628627814422222,False,8.279780679240332,sag,1002,multinomial,None,2019,None,0,True,None
+"census, gender",Score,l1,False,0.14112221563269917,22.306735913383406,True,6.945152409248964,liblinear,988,auto,None,2019,None,0,False,None
+"census, gender",Fairness,l1,False,0.3063690767556991,45.237353310746926,True,3.9124594764374554,saga,1010,auto,None,2019,None,0,False,None
+"census, race",Worst,l1,False,0.30588973697999694,83.16547417099655,False,6.758828364797037,liblinear,988,auto,None,2019,None,0,True,None
+"census, race",Score,l2,False,0.32651336924871305,61.84453228442555,True,3.8749324005056227,sag,1033,auto,None,2019,None,0,True,None
+"census, race",Fairness,l2,False,0.5455322919105575,4.993769241153807,False,0.3341263337287497,liblinear,1015,ovr,None,2019,None,0,True,None
+"credit, gender",Worst,l2,False,0.5345389535211633,15.716570958188363,True,5.637660656146496,lbfgs,950,auto,None,2019,None,0,True,None
+"credit, gender",Score,l2,False,0.5381666870662749,54.85753505656043,True,8.046820100451107,newton-cg,985,multinomial,None,2019,None,0,False,None
+"credit, gender",Fairness,l2,False,0.4740247231011861,1.397173381396959,True,5.6007257610794525,sag,989,auto,None,2019,None,0,False,None
+"bank, age",Worst,l2,False,0.8079471203846263,59.75685296954281,False,7.781969558606531,sag,956,multinomial,None,2019,None,0,True,None
+"bank, age",Score,l2,False,0.0001,10.0,False,1.0,lbfgs,1000,ovr,None,2019,None,0,False,None
+"bank, age",Fairness,l1,False,0.2571872534617089,41.35040354999318,False,7.402887921172063,liblinear,1021,ovr,None,2019,None,0,False,None
+"compas, gender",Worst,l1,False,0.728691576199578,60.90748890336184,False,4.155139651395745,liblinear,1023,ovr,None,2019,None,0,False,None
+"compas, gender",Score,l2,False,0.0001,10.0,True,1.0,lbfgs,1000,ovr,None,2019,None,0,False,None
+"compas, gender",Fairness,l2,False,0.0001,10.0,True,1.0,lbfgs,1000,ovr,None,2019,None,0,False,None
+"compas, race",Worst,l1,False,0.5954089763922976,49.867144290226385,False,6.950411051726238,liblinear,952,ovr,None,2019,None,0,False,None
+"compas, race",Score,l2,False,0.7686757027921707,99.95107801455643,True,3.2155753993540235,newton-cg,967,multinomial,None,2019,None,0,False,None
+"compas, race",Fairness,l2,False,0.7686757027921707,99.95107801455643,True,3.2155753993540235,newton-cg,967,multinomial,None,2019,None,0,False,None

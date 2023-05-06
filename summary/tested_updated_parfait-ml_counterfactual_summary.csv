@@ -1,0 +1,25 @@
+AOD,num_parfait_counterfactuals,total_sampled_points,dataset,model,optimal
+0.0572984356932093,362,32561,"census, gender",Logistic Regression,Worst
+0.0533603947793773,19,32561,"census, gender",Logistic Regression,Score
+0.0343345827271893,16,32561,"census, gender",Logistic Regression,Fairness
+0.1625141647639375,219,32561,"census, gender",Random Forest,Worst
+0.0978786861336331,581,32561,"census, gender",Random Forest,Score
+0.0472622622646559,31,32561,"census, gender",Random Forest,Fairness
+0.0355830901978868,10,32561,"census, gender",Support Vector Machine,Worst
+0.006332030910721,16,32561,"census, gender",Support Vector Machine,Score
+0.006332030910721,16,32561,"census, gender",Support Vector Machine,Fairness
+0.0673282757583321,3800,32561,"census, gender",Decision Tree,Worst
+0.0673282757583321,3800,32561,"census, gender",Decision Tree,Score
+0.0,0,32561,"census, gender",Decision Tree,Fairness
+0.0296829049815487,2933,45211,"bank, age",Logistic Regression,Worst
+0.0122756638987389,40689,45211,"bank, age",Logistic Regression,Score
+0.0122756638987389,40689,45211,"bank, age",Logistic Regression,Fairness
+0.0428424124979193,0,45211,"bank, age",Random Forest,Worst
+0.0066590168039838,0,45211,"bank, age",Random Forest,Score
+0.0,0,45211,"bank, age",Random Forest,Fairness
+0.0535642517810109,0,45211,"bank, age",Support Vector Machine,Worst
+0.0326875505122932,0,45211,"bank, age",Support Vector Machine,Score
+0.0326875505122932,0,45211,"bank, age",Support Vector Machine,Fairness
+0.0077373261213671,0,45211,"bank, age",Decision Tree,Worst
+0.0,0,45211,"bank, age",Decision Tree,Score
+0.0,0,45211,"bank, age",Decision Tree,Fairness
