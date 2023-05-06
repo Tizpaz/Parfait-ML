@@ -1,7 +1,7 @@
 from sklearn.metrics import accuracy_score
 from fairlearn.metrics import true_positive_rate, false_positive_rate
 import numpy as np
-from Themis.Themis2.themis2 import Themis
+
 from io import BytesIO
 
 def model_accuracy(model, encoded_X, encoded_Y):

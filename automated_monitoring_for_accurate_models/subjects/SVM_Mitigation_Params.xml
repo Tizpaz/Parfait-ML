@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+ <inputs>
+  <!--penalty -->
+  <param0>
+    <name>penalty</name>
+    <type>int</type>
+    <min>0</min>
+    <max>1</max>
+    <def>1</def>
+    <valtrans>l1</valtrans>
+    <valtrans>l2</valtrans>
+  </param0>
+  <!--loss -->
+  <param1>
+    <name>loss</name>
+    <type>int</type>
+    <min>0</min>
+    <max>1</max>
+    <def>1</def>
+    <valtrans>hinge</valtrans>
+    <valtrans>squared_hinge</valtrans>
+  </param1>
+  <!--dual -->
+  <param2>
+    <name>degree</name>
+    <type>bool</type>
+    <min>0</min>
+    <max>1</max>
+    <def>1</def>
+  </param2>
+  <!--tol -->
+  <param3>
+    <name>tol</name>
+    <type>float</type>
+    <min>0.000001</min>
+    <max>0.1</max>
+    <def>0.0001</def>
+  </param3>
+  <!--C -->
+  <param4>
+    <name>C</name>
+    <type>float</type>
+    <min>0.1</min>
+    <max>10.0</max>
+    <def>1.0</def>
+  </param4>
+  <!--multi_class -->
+  <param5>
+    <name>multi_class</name>
+    <type>int</type>
+    <min>0</min>
+    <max>1</max>
+    <def>0</def>
+    <valtrans>ovr</valtrans>
+    <valtrans>crammer_singer</valtrans>
+  </param5>
+   <!--fit_intercept -->
+  <param6>
+    <name>fit_intercept</name>
+    <type>bool</type>
+    <min>0</min>
+    <max>1</max>
+    <def>1</def>
+  </param6>
+  <!--intercept_scaling -->
+  <param7>
+    <name>intercept_scaling</name>
+    <type>float</type>
+    <min>0.1</min>
+    <max>10.0</max>
+    <def>1.0</def>
+  </param7>
+  <!--class_weight -->
+ <param8>
+   <name>class_weight</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+   <valtrans>none</valtrans>
+   <valtrans>balanced</valtrans>
+ </param8>
+ <!--eps of ExponentiatedGradient -->
+<param9>
+  <name>eps</name>
+  <type>float</type>
+  <min>0.001</min>
+  <max>0.1</max>
+  <def>0.01</def>
+</param9>
+<!--max_iter of ExponentiatedGradient -->
+<param10>
+ <name>max_iter</name>
+ <type>int</type>
+ <min>20</min>
+ <max>70</max>
+ <def>50</def>
+</param10>
+<!--eta_0 of ExponentiatedGradient -->
+<param11>
+ <name>eta0</name>
+ <type>float</type>
+ <min>0.01</min>
+ <max>1.0</max>
+ <def>0.2</def>
+</param11>
+<!--run_linprog_step of ExpGradient -->
+<param12>
+  <name>run_linprog_step</name>
+  <type>bool</type>
+  <min>0</min>
+  <max>1</max>
+  <def>1</def>
+</param12>
+</inputs>

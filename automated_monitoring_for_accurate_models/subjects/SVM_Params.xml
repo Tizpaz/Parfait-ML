@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+ <inputs>
+  <!--penalty -->
+  <param0>
+    <name>C</name>
+    <type>float</type>
+    <min>0.0</min>
+    <max>5.0</max>
+    <def>1.0</def>
+  </param0>
+  <!--loss -->
+  <param1>
+    <name>kernel</name>
+    <type>int</type>
+    <min>0</min>
+    <max>4</max>
+    <def>2</def>
+    <valtrans>linear</valtrans>
+    <valtrans>poly</valtrans>
+    <valtrans>rbf</valtrans>
+    <valtrans>sigmoid</valtrans>
+    <valtrans>precomputed</valtrans>
+  </param1>
+  <!--dual -->
+  <param2>
+    <name>degree</name>
+    <type>int</type>
+    <min>0</min>
+    <max>10</max>
+    <def>3</def>
+  </param2>
+  <!--tol -->
+  <param3>
+    <name>gamma</name>
+    <type>int</type>
+    <min>0</min>
+    <max>1</max>
+    <def>0</def>
+    <valtrans>scale</valtrans>
+    <valtrans>auto</valtrans>
+  </param3>
+  <!--C -->
+  <param4>
+    <name>coef0</name>
+    <type>float</type>
+    <min>0</min>
+    <max>10.0</max>
+    <def>0.0</def>
+  </param4>
+  <!--multi_class -->
+  <param5>
+    <name>shrinking</name>
+    <type>bool</type>
+    <min>0</min>
+    <max>1</max>
+    <def>1</def>
+  </param5>
+   <!--fit_intercept -->
+  <param6>
+    <name>probability</name>
+    <type>bool</type>
+    <min>0</min>
+    <max>1</max>
+    <def>1</def>
+  </param6>
+  <!--intercept_scaling -->
+  <param7>
+    <name>tol</name>
+    <type>float</type>
+    <min>0.00001</min>
+    <max>1</max>
+    <def>0.001</def>
+  </param7>
+  <!--class_weight -->
+  <param8>
+   <name>cache_size</name>
+   <type>float</type>
+   <min>150</min>
+   <max>300</max>
+   <def>250</def>
+ </param8>
+ <param9>
+   <name>class_weight</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+   <valtrans>none</valtrans>
+   <valtrans>balanced</valtrans>
+ </param9>
+ <!--random_state-->
+
+ <!--verbose-->
+ <param10>
+   <name>verbose</name>
+   <type>bool</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+ </param10>
+ <!--max_iter -->
+ <param11>
+   <name>max_iter</name>
+   <type>int</type>
+   <min>950</min>
+   <max>1050</max>
+   <def>1000</def>
+ </param11>
+  <param12>
+   <name>decision_function_shape</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>1</def>
+   <valtrans>ovo</valtrans>
+   <valtrans>ovr</valtrans>
+ </param12>
+  <param13>
+   <name>break_ties</name>
+   <type>bool</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+ </param13>
+
+  <param14>
+   <name>random_state</name>
+   <type>int</type>
+   <min>0</min>
+   <max>1</max>
+   <def>0</def>
+   <valtrans>None</valtrans>
+   <valtrans>int</valtrans>
+ </param14>
+
+</inputs>
