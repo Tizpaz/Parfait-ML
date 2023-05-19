@@ -1,11 +1,9 @@
 *.DS_Store
 *._.DS_Store
 *.pyc
-*.csv
-*.txt
 *.out
 *.png
-*.pkl
+tested_themis_summary.csv
 bank_age/
 census_gender/
 census_race/
@@ -15,3 +13,4 @@ __pycache__/
 job-submit.sh
 Abstract.docx
 Abstract.pdf
+misc_helper_functions.py

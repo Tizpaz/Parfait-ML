@@ -38,6 +38,8 @@ parser.add_argument("--sensitive_index", help='The index for sensitive feature')
 parser.add_argument("--output", help='The name of output file', required=False)
 parser.add_argument("--time_out", help='Max. running time', default = 14400, required=False)
 parser.add_argument("--max_iter", help='The maximum number of iterations', default = 100000, required=False)
+parser.add_argument("--save_model", help='Enable save models)', default = False, required=False)
+parser.add_argument("--standard_scale", help='Preprocess data with standard scaling on features before using model', default = False, required=False)
 args = parser.parse_args()
 
 def check_for_fairness(X, y_pred, y_true, a, X_new = None, Y_new = None):
@@ -81,7 +83,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
         import SVM
         input_program = SVM.SVM
         input_program_tree = 'SVM_Params.xml'
-        num_args = 12
+        num_args = 15
     elif(program_name == "LogisticRegressionMitigation"):
         import LogisticRegressionMitigation
         input_program = LogisticRegressionMitigation.logistic_regression_mitigation
@@ -196,9 +198,15 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                         else:
                             newVal = inp[index] - abs(maxVal-minVal)/100
             print(inp)
-
-            res, LR, inp_valid, score, preds, features = input_program(inp, X_train, X_test, y_train, y_test, sensitive_param)
-
+            if (args.standard_scale=="True"):
+                from sklearn.preprocessing import StandardScaler
+                # To avoid "data leaking"/contaminating the testing data, we transform/fit the X_test data using the X_train data. 
+                ss = StandardScaler()
+                ss.fit(X_train)
+                
+                res, LR, inp_valid, score, preds, features, write_file = input_program(inp, ss.transform(X_train), ss.transform(X_test), y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"))
+            else:
+                res, LR, inp_valid, score, preds, features, write_file = input_program(inp, X_train, X_test, y_train, y_test, sensitive_param, dataset_name=dataset, save_model=(args.save_model=="True"))
             if not res:
                 failed += 1
                 continue
@@ -210,6 +218,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                 features.append("FPR")
                 features.append("counter")
                 features.append("timer")
+                features.append("write_file")
                 for i in range(len(features)):
                     if i < len(features) - 1:
                         if features[i] == None:
@@ -221,8 +230,8 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
                 f.write("\n")
                 default_acc = score
 
-            if (score < (default_acc - 0.01)):
-                continue
+            # if (score < (default_acc - 0.01)): # TODO: Accuracy 1%
+            #    continue
 
             if(score > highest_acc):
                 highest_acc = score
@@ -242,6 +251,7 @@ def test_cases(dataset, program_name, max_iter, X_train, X_test, y_train, y_test
             full_inp.append(diff_2)
             full_inp.append(counter)
             full_inp.append(time.time() - start_time)
+            full_inp.append(f'"{str(write_file)}"')
 
             for i in range(len(full_inp)):
                 if i < len(full_inp) - 1:
@@ -330,8 +340,8 @@ if __name__ == '__main__':
         group_0 = 0  #female
         group_1 = 1  #male
     if dataset == "census" and sensitive_param == 8:
-        group_0 = 0
-        group_1 = 4
+        group_0 = 0 # white
+        group_1 = 4 # black
         sensitive_name = "race"
     if dataset == "credit" and sensitive_param == 9:
         group_0 = 0  # male
@@ -360,6 +370,8 @@ if __name__ == '__main__':
 
     X_train, X_test, y_train, y_test = train_test_split(X, Y, random_state=0)
 
+
+    
     try:
         test_cases(dataset, algorithm, num_iteration, X_train, X_test, y_train, y_test, sensitive_param, group_0, group_1, sensitive_name, start_time)
     except TimeoutError as error:

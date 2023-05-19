@@ -1,0 +1,19 @@
+dataset,optimal,criterion,splitter,max_depth,min_samples_split,min_samples_leaf,min_weight_fraction_leaf,max_features,random_state,max_leaf_nodes,min_impurity_decrease,class_weight,ccp_alpha
+"census, gender",Worst,gini,best,None,2,1,0.0,None,2019,None,0.0,None,0.0
+"census, gender",Score,gini,best,None,2,1,0.0,None,2019,None,0.0,None,0.0
+"census, gender",Fairness,entropy,random,None,3,5,0.329706872043997,None,2019,None,0.0,None,0.028945681327712598
+"census, race",Worst,gini,best,18,3,1,0.0,None,2019,None,0.0,None,0.0
+"census, race",Score,gini,best,7,4,5,0.0,None,2019,None,0.0,None,0.0
+"census, race",Fairness,gini,best,18,3,2,0.13716282804600957,log2,2019,None,0.0,None,0.1569921191170973
+"credit, gender",Worst,gini,best,7,2,3,0.0,sqrt,2019,None,0.0,None,0.0
+"credit, gender",Score,gini,random,9,2,4,0.0,log2,2019,None,0.0,None,0.0
+"credit, gender",Fairness,entropy,random,5,5,3,0.2384499133089665,sqrt,2019,None,0.0,None,0.907177271540989
+"bank, age",Worst,gini,best,None,2,1,0.0,None,2019,None,0.0,None,0.0
+"bank, age",Score,gini,best,None,2,1,0.4460908211949237,None,2019,None,0.0,None,0.0
+"bank, age",Fairness,gini,best,None,2,1,0.4460908211949237,None,2019,None,0.0,None,0.0
+"compas, gender",Worst,gini,best,11,5,1,0.4036450019593512,auto,2019,None,0.0,None,0.004077913416239178
+"compas, gender",Score,entropy,best,9,2,2,0.03994458551377253,None,2019,None,0.0,None,0.5589434945543046
+"compas, gender",Fairness,entropy,random,19,5,5,0.01886393676539287,sqrt,2019,None,0.0,None,0.7630108741454945
+"compas, race",Worst,gini,best,13,4,5,0.15081259652456497,sqrt,2019,None,0.0,None,0.13573726274339074
+"compas, race",Score,entropy,random,5,5,5,0.06714672935100653,None,2019,None,0.0,None,0.6450037039953451
+"compas, race",Fairness,entropy,random,None,4,4,0.3433955854607371,sqrt,2019,None,0.0,None,0.3909543270323905

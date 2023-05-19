@@ -18,6 +18,11 @@ My installation process is as follows:
 3) sudo apt-get install git
 4) Install required packages for python
 5) Install jupyter notebook with 'sudo apt-get install jupyter' and set up jupyter notebook following this tutorial: https://tudip.com/blog-post/run-jupyter-notebook-on-google-cloud-platform/ (try to set up security as well using a password)
+
+- Streamlit "server" can be run from "monitoring_framework"
+- Found some information about census dataset here: https://archive.ics.uci.edu/ml/datasets/census+income
+- FOund some information about the German credit here: https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data)
+- FOund some information about the bank here: https://archive.ics.uci.edu/ml/datasets/bank+marketing
 ## Docker File
 ```
 docker run --rm -it  parfait:1.0.0

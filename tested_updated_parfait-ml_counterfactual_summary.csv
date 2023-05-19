@@ -1,0 +1,37 @@
+score,AOD,num_parfait_counterfactuals,total_sampled_points,dataset,model,optimal
+0.8037096179830487,0.0572984356932093,478,32561,"census, gender",Logistic Regression,Worst
+0.8066576587642795,0.0533603947793773,51,32561,"census, gender",Logistic Regression,Score
+0.8003930721041641,0.0343345827271893,32,32561,"census, gender",Logistic Regression,Fairness
+0.8373664169021005,0.1625141647639375,1079,32561,"census, gender",Random Forest,Worst
+0.8568971870777545,0.0978786861336331,767,32561,"census, gender",Random Forest,Score
+0.7666134381525611,0.0472622622646559,763,32561,"census, gender",Random Forest,Fairness
+0.7131801989927528,0.0355830901978868,11,32561,"census, gender",Support Vector Machine,Worst
+0.7222699914015477,0.006332030910721,27,32561,"census, gender",Support Vector Machine,Score
+0.7222699914015477,0.006332030910721,27,32561,"census, gender",Support Vector Machine,Fairness
+0.8051836383736641,0.0673282757583321,3542,32561,"census, gender",Decision Tree,Worst
+0.8051836383736641,0.0673282757583321,3542,32561,"census, gender",Decision Tree,Score
+0.7565409654833558,0.0,0,32561,"census, gender",Decision Tree,Fairness
+0.8078860090897924,0.0910361475097267,1768,32561,"census, race",Logistic Regression,Worst
+0.808991524382754,0.0632050115743897,1195,32561,"census, race",Logistic Regression,Score
+0.7565409654833558,0.0,0,32561,"census, race",Logistic Regression,Fairness
+0.8014985873971257,0.1034390146289927,688,32561,"census, race",Random Forest,Worst
+0.8544404864267289,0.0733053245933778,960,32561,"census, race",Random Forest,Score
+0.8513696106129468,0.0377083012975703,0,32561,"census, race",Random Forest,Fairness
+0.6441469106989314,0.0261821839475878,337,32561,"census, race",Support Vector Machine,Worst
+0.7129345289276502,0.0099997955245614,208,32561,"census, race",Support Vector Machine,Score
+0.7129345289276502,0.0099997955245614,208,32561,"census, race",Support Vector Machine,Fairness
+0.8399459525856774,0.0458783031878606,144,32561,"census, race",Decision Tree,Worst
+0.8525979609384596,0.0405218795029524,25,32561,"census, race",Decision Tree,Score
+0.7565409654833558,0.0,0,32561,"census, race",Decision Tree,Fairness
+0.8886136423958241,0.0296829049815487,0,45211,"bank, age",Logistic Regression,Worst
+0.8955144651862338,0.0122756638987389,0,45211,"bank, age",Logistic Regression,Score
+0.8955144651862338,0.0122756638987389,0,45211,"bank, age",Logistic Regression,Fairness
+0.8817128196054145,0.0428424124979193,0,45211,"bank, age",Random Forest,Worst
+0.9001150137131735,0.0100681790409438,0,45211,"bank, age",Random Forest,Score
+0.8827744846500929,0.0,0,45211,"bank, age",Random Forest,Fairness
+0.7909404582854109,0.0535642517810109,0,45211,"bank, age",Support Vector Machine,Worst
+0.8396001061665045,0.0326875505122932,0,45211,"bank, age",Support Vector Machine,Score
+0.8396001061665045,0.0326875505122932,0,45211,"bank, age",Support Vector Machine,Fairness
+0.8702999203751216,0.0077373261213671,0,45211,"bank, age",Decision Tree,Worst
+0.8827744846500929,0.0,0,45211,"bank, age",Decision Tree,Score
+0.8827744846500929,0.0,0,45211,"bank, age",Decision Tree,Fairness
