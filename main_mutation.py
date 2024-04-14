@@ -20,7 +20,8 @@ from sklearn.model_selection import train_test_split
 from fairlearn.metrics import MetricFrame, selection_rate, false_positive_rate, true_positive_rate
 from fairlearn.metrics import demographic_parity_difference, demographic_parity_ratio, equalized_odds_difference
 
-from adf_utils.config import census, credit, bank, compas
+from adf_utils.config import new_census, census, credit, bank, compas
+from adf_data.new_census import new_census_data
 from adf_data.census import census_data
 from adf_data.credit import credit_data
 from adf_data.bank import bank_data
@@ -332,7 +333,7 @@ if __name__ == '__main__':
     algorithm = args.algorithm
     num_iteration =  int(args.max_iter)
 
-    data = {"census":census_data, "credit":credit_data, "bank":bank_data, "compas": compas_data}
+    data = {"new_census_data":new_census_data, "census":census_data, "credit":credit_data, "bank":bank_data, "compas": compas_data}
     data_config = {"census":census, "credit":credit, "bank":bank, "compas": compas}
 
     # census (9 is for sex: 0 (men) vs 1 (female); 8 is for race: 0 (white) vs 4 (black))
@@ -343,6 +344,18 @@ if __name__ == '__main__':
 
     group_0 = 0
     group_1 = 1
+
+    survey_data_census = True if dataset[0:3] == 'new' else False
+
+    # Chaning
+    if survey_data_census and sensitive_param == 9:
+        sensitive_name = "gender"
+        group_0 = 2  #female
+        group_1 = 1  #male
+    if survey_data_census and sensitive_param == 10:
+        sensitive_name = "race"
+        group_0 = 2  # non-white
+        group_1 = 1  # white
     if dataset == "census" and sensitive_param == 9:
         sensitive_name = "gender"
         group_0 = 0  #female
@@ -372,7 +385,7 @@ if __name__ == '__main__':
         group_1 = 1 # Caucasian
         sensitive_name = "race"
 
-    X, Y, input_shape, nb_classes = data[dataset]()
+    X, Y, input_shape, nb_classes = data['new_census_data'](dataset) if survey_data_census else data[dataset]()
 
     Y = np.argmax(Y, axis=1)
 
