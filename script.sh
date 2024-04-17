@@ -152,3 +152,7 @@ python3 main_SMBO.py --dataset=credit --algorithm=Decision_Tree_Classifier --sen
 
 python3 main_SMBO.py --dataset=bank --algorithm=LogisticRegression --sensitive_index=1
 python3 main_SMBO.py --dataset=bank --algorithm=Decision_Tree_Classifier --sensitive_index=1
+
+python3 main_mutation.py --dataset=new_census2014 --algorithm=Discriminant_Analysis --sensitive_index=10 --output=DACENSUS_2014_race.csv --time_out=600
+python3 main_mutation.py --dataset=new_census2015 --algorithm=LogisticRegression --sensitive_index=9 --output=LRCENSUS_2015_sex.csv --time_out=1800
+python3 main_mutation.py --dataset=new_census2018 --algorithm=Decision_Tree_Classifier --sensitive_index=10 --output=DTCENSUS_2018_race.csv --time_out=7200

@@ -1,3 +1,32 @@
+class new_census:
+    """
+    Configuration of dataset Survey Census Income
+    """
+
+    # the size of total features
+    params = 10
+
+    input_bounds = []
+    input_bounds.append([17, 99])
+    input_bounds.append([1, 8])
+    input_bounds.append([1, 24])
+    input_bounds.append([1, 5])
+    input_bounds.append([10, 9830])
+    input_bounds.append([1, 554])
+    input_bounds.append([0, 17])
+    input_bounds.append([1, 2])
+    input_bounds.append([1, 9])
+    input_bounds.append([1, 1])
+
+    # the name of each feature
+    feature_name = ["AGEP", "COW", "SCHL", "MAR", "OCCP", "POBP", "RELP", "WKHP", "SEX", "RAC1P"]
+
+    # the name of each class
+    class_name = ["low", "high"]
+
+    # specify the categorical features with their indices
+    categorical_features = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
 # adapted from ADF https://github.com/pxzhang94/adf
 class census:
     """

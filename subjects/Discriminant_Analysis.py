@@ -29,7 +29,7 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 #     y = np.hstack((np.zeros(n), np.ones(n)))
 #     return X, y
 
-def disc_analysis(inp, X_train, X_test, y_train, y_test, sensitive_param = None):
+def disc_analysis(inp, X_train, X_test, y_train, y_test, sensitive_param = None, dataset_name = "", save_model=False):
     arr, features = xml_parser.xml_parser('Discriminant_Analysis_Params.xml',inp)
     # value for parameter_6
     if(arr[2]=="float"):
@@ -60,7 +60,7 @@ def disc_analysis(inp, X_train, X_test, y_train, y_test, sensitive_param = None)
             lda = LinearDiscriminantAnalysis(solver=arr[1],
             shrinkage=arr[2],priors=arr[3],n_components=arr[4],
             store_covariance=arr[5], tol=arr[6])
-            y_pred = lda.fit(X_train, y_train)
+            y_pred = lda.fit(X_train, y_train)      
             score = lda.score(X_test, y_test)
             preds = lda.predict(X_test)
             return True, lda, arr, score, preds, features
