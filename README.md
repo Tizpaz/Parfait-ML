@@ -1,40 +1,47 @@
-# Parafait-ML: (PARameter FAIrness Testing for ML Libraries)
+# FairLay-ML
 
-This repository provides the tool and the evaluation subjects for the paper "Fairness-aware Configuration of Machine Learning Libraries" accepted for the technical track at [ICSE'2022](https://arxiv.org/abs/2202.06196).
+This repository provides the tool and the evaluation subjects for the UG thesis: [FairLay-ML: Intuitive Remedies for Unfairness in Data-Driven Social-Critical Algorithms](https://arxiv.org/abs/2307.05029). FairLay-ML is built on top of "Fairness-aware Configuration of Machine Learning Libraries" accepted for the technical track at [ICSE'2022](https://arxiv.org/abs/2202.06196).
 
 The repository includes:
 * a [Dockerfile](Dockerfile) to build the Docker script,
-* a set of required libraries for running the tool on local machine,
+* a set of required libraries for running the tool on the local machine,
 * the source code of *Parfait-ML*,
 * the evaluation subjects: [subjects](./subjects),
 * the pre-built evaluation all results: [Dataset](./Dataset), and
 * the scripts to rerun all search experiments: [scripts](./script.sh).
 
-## Personal setup
-I am using Google Cloud Platforms C2 (compute optimized, 8 vCPU, 32 GB) Computer Engine Virtual Machine.
-My installation process is as follows:
+## Setup
+FairLay-ML uses Google Cloud Platforms C2 (compute optimized, 8 vCPU, 32 GB) Computer Engine Virtual Machine.
+The installation process is as follows:
+
 1) Follow this tutorial for graphics displays: https://ubuntu.com/blog/launch-ubuntu-desktop-on-google-cloud
+
 2) Follow this tutorial for Docker container installation: https://docs.docker.com/engine/install/ubuntu/
+
 3) sudo apt-get install git
+
 4) Install required packages for python
+
 5) Install jupyter notebook with 'sudo apt-get install jupyter' and set up jupyter notebook following this tutorial: https://tudip.com/blog-post/run-jupyter-notebook-on-google-cloud-platform/ (try to set up security as well using a password)
 
-- Streamlit "server" can be run from "monitoring_framework"
-- Found some information about census dataset here: https://archive.ics.uci.edu/ml/datasets/census+income
-- FOund some information about the German credit here: https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data)
-- FOund some information about the bank here: https://archive.ics.uci.edu/ml/datasets/bank+marketing
+Here are some other considerations:
+* Streamlit "server" can be run from "monitoring_framework"
+* Found some information about the census dataset here: https://archive.ics.uci.edu/ml/datasets/census+income
+* Found some information about the German credit here: https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data)
+* Found some information about the bank here: https://archive.ics.uci.edu/ml/datasets/bank+marketing
+
 ## Docker File
 ```
 docker run --rm -it  parfait:1.0.0
 ```
-We recommend to use Docker's [volume](https://docs.docker.com/engine/reference/run/#volume-shared-filesystems) feature to connect the docker container to the own file system so that Parfait-ML's results can be easily accessed.
-Furthermore, we recommend to run scripts in an own [screen session](https://linuxize.com/post/how-to-use-linux-screen/#starting-named-session) so that the results can be observed during execution.
+We recommend using Docker's [volume](https://docs.docker.com/engine/reference/run/#volume-shared-filesystems) feature to connect the docker container to the own file system so that Parfait-ML's results can be easily accessed.
+Furthermore, we recommend running scripts in their own [screen session](https://linuxize.com/post/how-to-use-linux-screen/#starting-named-session) so that the results can be observed during execution.
 
 Note: The tool is initially built for MacOS. Docker version
-with Ubuntu might experience some unexpected error.
+with Ubuntu might experience some unexpected errors.
 
-## Tool
-*Parfait-ML* is a search-based software testing and statistical debugging tool to configure ML libraries fairly and detect fairness bugs in the configuration space of ML algorithms. *Parfait-ML* focuses on the hyperparameters in training of ML models and whether they amplify or suppress discriminations in data-driven software. Some prominent examples of hyperparameters include l1 vs. l2 loss
+## Parfait-ML
+Users can modify *Parfait-ML* which is a search-based software testing and statistical debugging tool to configure ML libraries fairly and detect fairness bugs in the configuration space of ML algorithms. *Parfait-ML* focuses on the hyperparameters in the training of ML models and whether they amplify or suppress discriminations in data-driven software. Some prominent examples of hyperparameters include l1 vs. l2 loss
 function in support vector machines, the maximum depth of a decision tree,
 and the number of layers/neurons in deep neural networks.
 
@@ -53,7 +60,7 @@ If you use the pre-built [Docker image](#docker-image), the tool is already buil
 
 
 ### Getting Started with an example
-After succesfully setup *Parfait-ML*, you can try a simple example to check the basic functionality.
+After successfully setup *Parfait-ML*, you can try a simple example to check the basic functionality.
 We prepared a simple run script for the logistic regression subject over census dataset with race as sensitive attribute. The [`black-box fuzzer`](./main_mutation.py) interacts with the
 [`logistic regression algorithm`](subjects/LogisticRegression.py). The hyperparameter variables and their domains are specified
 as an XML file, see [`XML file for Logistic Regression`](subjects/LogisticRegression_Params.XML). The datasets are in [`datasets folder`](subjects/datasets/). For this example, we use [`census dataset`](subjects/datasets/census). 
@@ -64,7 +71,7 @@ Here, we run the black-box fuzzer for 10 minutes:
 ```
 python3 main_mutation.py --dataset=census --algorithm=LogisticRegression --sensitive_index=8 --output=LogisticRegression_census_sex.csv --time_out=600
 ```
-where the column with index 8 is corresponds to `race` attribute of each sample individual. After $10$ minutes, the process
+where the column with index 8 corresponds to `race` attribute of each sample individual. After $10$ minutes, the process
 ends and shows the test case filename, which is
 a CSV file. 
 We can issue `vi` command to explore the csv
